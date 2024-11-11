@@ -11,3 +11,12 @@ export const authenticateToken = (req, res, next) => {
     next();
   });
 };
+
+export const authorizeRole = (requiredRole) => {
+  return (req, res, next) => {
+    if (req.user.role !== requiredRole) {
+      return res.status(403).json({ message: 'Forbidden: Insufficient role' });
+    }
+    next();
+  };
+};
