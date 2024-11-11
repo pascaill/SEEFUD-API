@@ -1,7 +1,9 @@
 import express from "express";
 import dotenv from "dotenv";
+
 import authRoutes from "./routes/authRoutes.mjs";
-import umkmRoutes from "./routes/umkmRoutes.mjs";
+import vendorRoutes from "./routes/vendorRoutes.mjs";
+import productRoutes from "./routes/productRoutes.mjs";
 
 dotenv.config();
 
@@ -12,7 +14,8 @@ app.use(express.json());
 
 // Gunakan rute yang dipisahkan
 app.use(authRoutes);
-app.use(umkmRoutes);
+app.use(vendorRoutes);
+app.use(productRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);

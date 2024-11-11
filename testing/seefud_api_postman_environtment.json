@@ -11,6 +11,21 @@
       "key": "authToken",
       "value": "",
       "enabled": true
+    },
+    {
+      "key": "userId",
+      "value": "",
+      "enabled": true
+    },
+    {
+      "key": "vendorId",
+      "value": "",
+      "enabled": true
+    },
+    {
+      "key": "productId",
+      "value": "",
+      "enabled": true
     }
   ],
   "_postman_variable_scope": "environment",

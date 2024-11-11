@@ -25,7 +25,19 @@
               "raw": "{\n  \"name\": \"testuser\",\n  \"email\": \"test@example.com\",\n  \"password\": \"password123\",\n  \"role\": \"vendor\"\n}"
             },
             "url": "{{baseUrl}}/register"
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 20X', function () {pm.expect(pm.response.code).to.be.within(200, 299);})"
+                ],
+
+                "type": "text/javascript"
+              }
+            }
+          ]
         },
         {
           "name": "Login",
@@ -49,8 +61,11 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.environment.set(\"authToken\", pm.response.json().data.token);"
+                  "pm.environment.set('authToken', pm.response.json().data.token);",
+                  "pm.environment.set('userId', pm.response.json().data.id);",
+                  "pm.test('Status code is 20X', function () {pm.expect(pm.response.code).to.be.within(200, 299);})"
                 ],
+
                 "type": "text/javascript"
               }
             }
@@ -73,7 +88,19 @@
               }
             ],
             "url": "{{baseUrl}}/logout"
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 20X', function () {pm.expect(pm.response.code).to.be.within(200, 299);})"
+                ],
+
+                "type": "text/javascript"
+              }
+            }
+          ]
         }
       ]
     },
@@ -101,7 +128,19 @@
               "raw": "{\n  \"name\": \"updatedName\",\n  \"email\": \"updated@example.com\"\n}"
             },
             "url": "{{baseUrl}}/profile"
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 20X', function () {pm.expect(pm.response.code).to.be.within(200, 299);})"
+                ],
+
+                "type": "text/javascript"
+              }
+            }
+          ]
         },
         {
           "name": "Delete Account",
@@ -124,7 +163,19 @@
               "raw": "{\n  \"email\": \"test@example.com\"\n}"
             },
             "url": "{{baseUrl}}/profile"
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 20X', function () {pm.expect(pm.response.code).to.be.within(200, 299);})"
+                ],
+
+                "type": "text/javascript"
+              }
+            }
+          ]
         }
       ]
     },
@@ -147,8 +198,277 @@
                 "type": "text"
               }
             ],
-            "url": "{{baseUrl}}/umkm-dashboard"
-          }
+            "url": "{{baseUrl}}/vendor/dashboard"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 20X', function () {pm.expect(pm.response.code).to.be.within(200, 299);})"
+                ],
+
+                "type": "text/javascript"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Vendor",
+      "item": [
+        {
+          "name": "Create Vendor",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"user_id\": {{userId}},\n  \"store_name\": \"Store Example\",\n  \"description\": \"A sample description\",\n  \"location\": \"Sample Location\"\n}"
+            },
+            "url": "{{baseUrl}}/vendor"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.environment.set(\"vendorId\", pm.response.json().data.id);",
+                  "pm.test('Status code is 20X', function () {pm.expect(pm.response.code).to.be.within(200, 299);})"
+                ],
+
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Vendor",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/vendor/{{vendorId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 20X', function () {pm.expect(pm.response.code).to.be.within(200, 299);})"
+                ],
+
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update Vendor",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"store_name\": \"Updated Store Name\",\n  \"description\": \"Updated description\"\n}"
+            },
+            "url": "{{baseUrl}}/vendor/{{vendorId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 20X', function () {pm.expect(pm.response.code).to.be.within(200, 299);})"
+                ],
+
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Delete Vendor",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/vendor/{{vendorId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 20X', function () {pm.expect(pm.response.code).to.be.within(200, 299);})"
+                ],
+
+                "type": "text/javascript"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Product",
+      "item": [
+        {
+          "name": "Create Product",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"vendor_id\": {{vendorId}},\n  \"name\": \"Product Example\",\n  \"description\": \"Product description\",\n  \"price\": 100.50,\n  \"qr_code\": \"SampleQRCodeData\"\n}"
+            },
+            "url": "{{baseUrl}}/product"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.environment.set(\"productId\", pm.response.json().data.id);",
+                  "pm.test('Status code is 20X', function () {pm.expect(pm.response.code).to.be.within(200, 299);})"
+                ],
+
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Product",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/product/{{productId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 20X', function () {pm.expect(pm.response.code).to.be.within(200, 299);})"
+                ],
+
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update Product",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Updated Product Name\",\n  \"description\": \"Updated product description\",\n  \"price\": 200.75,\n  \"qr_code\": \"UpdatedQRCodeData\"\n}"
+            },
+            "url": "{{baseUrl}}/product/{{productId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 20X', function () {pm.expect(pm.response.code).to.be.within(200, 299);})"
+                ],
+
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Delete Product",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/product/{{productId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 20X', function () {pm.expect(pm.response.code).to.be.within(200, 299);})"
+                ],
+
+                "type": "text/javascript"
+              }
+            }
+          ]
         }
       ]
     }
