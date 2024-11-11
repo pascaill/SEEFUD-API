@@ -104,6 +104,10 @@ export const login = async (req, res) => {
   }
 };
 
+export const logout = (req, res) => {
+  return res.status(200).json({ message: "User logged out successfully" });
+};
+
 export const deleteAccount = async (req, res) => {
   const { id, email: userEmail } = req.user;
   const { email } = req.body;
@@ -129,7 +133,6 @@ export const deleteAccount = async (req, res) => {
     });
   }
 };
-
 export const updateProfile = async (req, res) => {
   const { id } = req.user;
   const { name, email } = req.body;
@@ -165,8 +168,4 @@ export const updateProfile = async (req, res) => {
       error: error.message,
     });
   }
-};
-
-export const logout = (req, res) => {
-  return res.status(200).json({ message: "User logged out successfully" });
 };
