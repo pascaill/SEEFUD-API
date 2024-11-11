@@ -27,7 +27,7 @@ app.delete("/profile", authenticateToken, deleteAccount);
 app.get(
   "/umkm-dashboard",
   authenticateToken,
-  authorizeRole("pemilik_umkm"),
+  authorizeRole("vendor"),
   (req, res) => {
     res.status(200).json({ message: "Welcome to UMKM dashboard" });
   }
