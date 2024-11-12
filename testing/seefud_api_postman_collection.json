@@ -10,7 +10,7 @@
       "name": "User Authentication",
       "item": [
         {
-          "name": "Register",
+          "name": "Register User Role Admin",
           "request": {
             "method": "POST",
             "header": [
@@ -22,7 +22,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"testuser\",\n  \"email\": \"test@example.com\",\n  \"password\": \"password123\",\n  \"role\": \"vendor\"\n}"
+              "raw": "{\n  \"name\": \"Admin\",\n  \"email\": \"admin@example.com\",\n  \"password\": \"admin123\",\n  \"role\": \"admin\"\n}"
             },
             "url": "{{baseUrl}}/register"
           },
@@ -31,6 +31,73 @@
               "listen": "test",
               "script": {
                 "exec": [
+                  "pm.environment.set('emailUser', pm.response.json().data.user.email);",
+                  "pm.environment.set('passwordUser', pm.response.json().data.user.role +'123');",
+                  "pm.environment.set('authToken', pm.response.json().data.token);",
+                  "pm.test('Status code is 20X', function () {pm.expect(pm.response.code).to.be.within(200, 299);})"
+                ],
+
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Register User Role Vendor",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"User Vendor\",\n  \"email\": \"vendor@example.com\",\n  \"password\": \"vendor123\",\n  \"role\": \"vendor\"\n}"
+            },
+            "url": "{{baseUrl}}/register"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.environment.set('emailUser', pm.response.json().data.user.email);",
+                  "pm.environment.set('passwordUser', pm.response.json().data.user.role +'123');",
+                  "pm.test('Status code is 20X', function () {pm.expect(pm.response.code).to.be.within(200, 299);})"
+                ],
+
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Register User Role Customer",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"User Customer\",\n  \"email\": \"customer@example.com\",\n  \"password\": \"customer123\",\n  \"role\": \"customer\"\n}"
+            },
+            "url": "{{baseUrl}}/register"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.environment.set('emailUser', pm.response.json().data.user.email);",
+                  "pm.environment.set('passwordUser', pm.response.json().data.user.role +'123');",
                   "pm.test('Status code is 20X', function () {pm.expect(pm.response.code).to.be.within(200, 299);})"
                 ],
 
@@ -52,7 +119,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"email\": \"test@example.com\",\n  \"password\": \"password123\",\n  \"role\": \"vendor\"\n}"
+              "raw": "{\n  \"email\": \"{{emailUser}}\",\n  \"password\": \"{{passwordUser}}\"\n}"
             },
             "url": "{{baseUrl}}/login"
           },
@@ -456,6 +523,135 @@
               }
             ],
             "url": "{{baseUrl}}/product/{{productId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 20X', function () {pm.expect(pm.response.code).to.be.within(200, 299);})"
+                ],
+
+                "type": "text/javascript"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Feedback",
+      "item": [
+        {
+          "name": "Create Feedback",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"user_id\": {{user_id}}, \"vendor_id\": {{vendorId}},\n  \"rating\": \"5\",\n  \"comment\": \"Feedback Comment\",\n  \"report\": 0\n }"
+            },
+            "url": "{{baseUrl}}/feedback"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.environment.set(\"feedbackId\", pm.response.json().data.id);",
+                  "pm.test('Status code is 20X', function () {pm.expect(pm.response.code).to.be.within(200, 299);})"
+                ],
+
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Feedback",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/feedback/{{feedbackId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 20X', function () {pm.expect(pm.response.code).to.be.within(200, 299);})"
+                ],
+
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update Feedback",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rating\": \"4\",\n  \"comment\": \"Ndk enak\"\n }"
+            },
+            "url": "{{baseUrl}}/feedback/{{feedbackId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 20X', function () {pm.expect(pm.response.code).to.be.within(200, 299);})"
+                ],
+
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Delete Feedback",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/feedback/{{feedbackId}}"
           },
           "event": [
             {

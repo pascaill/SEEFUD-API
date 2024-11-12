@@ -18,12 +18,28 @@
       "enabled": true
     },
     {
+      "key": "emailUser",
+      "value": "",
+      "enabled": true
+    },
+    {
+      "key": "passwordUser",
+      "value": "",
+      "enabled": true
+    },
+
+    {
       "key": "vendorId",
       "value": "",
       "enabled": true
     },
     {
       "key": "productId",
+      "value": "",
+      "enabled": true
+    },
+    {
+      "key": "feedbackId",
       "value": "",
       "enabled": true
     }

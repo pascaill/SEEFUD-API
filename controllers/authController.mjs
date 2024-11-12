@@ -18,7 +18,7 @@ const generateToken = (user) => {
 };
 
 export const register = async (req, res) => {
-  const roles = ["vendor", "customer"];
+  const roles = ["vendor", "customer", "admin"];
   const { name, email, password, role } = req.body;
   if (!name || !email || !password || !role) {
     return res
@@ -63,8 +63,8 @@ export const register = async (req, res) => {
 };
 
 export const login = async (req, res) => {
-  const { email, password, role } = req.body;
-  if (!email || !password || !role) {
+  const { email, password } = req.body;
+  if (!email || !password) {
     return res.status(400).json({ error: "Please provide email and password" });
   }
 
