@@ -322,7 +322,15 @@
           ]
         },
         {
-          "name": "Get Vendor",
+          "name": "Get All Vendor",
+          "request": {
+            "method": "GET",
+
+            "url": "{{baseUrl}}/vendor"
+          }
+        },
+        {
+          "name": "Get Vendor by ID",
           "request": {
             "method": "GET",
             "header": [
@@ -413,6 +421,14 @@
     {
       "name": "Product",
       "item": [
+        {
+          "name": "Get All Product",
+          "request": {
+            "method": "GET",
+
+            "url": "{{baseUrl}}/product"
+          }
+        },
         {
           "name": "Create Product",
           "request": {
@@ -561,7 +577,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"user_id\": {{user_id}}, \"vendor_id\": {{vendorId}},\n  \"rating\": \"5\",\n  \"comment\": \"Feedback Comment\",\n  \"report\": 0\n }"
+              "raw": "{\n  \"user_id\": {{userId}},\n \"vendor_id\": {{vendorId}},\n  \"rating\": \"3\",\n  \"comment\": \"Feedback Comment update\",\n  \"report_status\": \"0\",\n }"
             },
             "url": "{{baseUrl}}/feedback"
           },
@@ -623,7 +639,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"rating\": \"4\",\n  \"comment\": \"Ndk enak\"\n }"
+              "raw": "{\n  \"user_id\": {{userId}},\n \"vendor_id\": {{vendorId}},\n  \"rating\": \"5\",\n  \"comment\": \"Feedback Comment\",\n  \"report_status\": \"0\",\n }"
             },
             "url": "{{baseUrl}}/feedback/{{feedbackId}}"
           },

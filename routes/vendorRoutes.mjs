@@ -5,6 +5,7 @@ import {
   getVendor,
   updateVendor,
   deleteVendor,
+  getAllVendor,
 } from "../controllers/vendorController.mjs";
 
 import {
@@ -26,9 +27,28 @@ router.get(
 );
 
 // bisa di sesuaikan untuk hak akses role nya
-router.post("/vendor", authenticateToken, createVendor);
-router.get("/vendor/:id", authenticateToken, getVendor);
-router.put("/vendor/:id", authenticateToken, updateVendor);
-router.delete("/vendor/:id", authenticateToken, deleteVendor);
+router.post(
+  "/vendor",
+  authenticateToken,
+  authorizeRole(mustRole),
+  createVendor
+);
+
+router.get("/vendor", getAllVendor);
+router.get("/vendor/:id", getVendor);
+
+router.put(
+  "/vendor/:id",
+  authenticateToken,
+  authorizeRole(mustRole),
+  updateVendor
+);
+
+router.delete(
+  "/vendor/:id",
+  authenticateToken,
+  authorizeRole(mustRole, "admin"),
+  deleteVendor
+);
 
 export default router;

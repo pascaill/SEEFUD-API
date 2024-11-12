@@ -1,4 +1,5 @@
 # **To do checklist:**
+
 - ~~User Endpoint (Consumer, Vendor, Admin)~~
 - ~~Feedback Endpoint~~
 - ~~Connect to Database (mysql)~~
@@ -22,7 +23,7 @@ This guide provides instructions on how to use the SeeFud Management API Postman
   - [Vendor Dashboard](#vendor-dashboard)
   - [Vendor](#vendor)
   - [Product](#product)
-
+  - [Feedback](#feedback)
 
 ## Prerequisites
 
@@ -132,7 +133,12 @@ This collection uses environment variables to manage dynamic data, such as the b
     ```
   - **Note**: Stores `vendorId` for future requests.
 
-- **Get Vendor**: Retrieves vendor details.
+- **Get All Vendor**: Retrieves vendor collections.
+
+  - **Method**: `GET`
+  - **URL**: `{{baseUrl}}/vendor`
+
+- **Get Vendor by ID**: Retrieves vendor details.
 
   - **Method**: `GET`
   - **URL**: `{{baseUrl}}/vendor/{{vendorId}}`
@@ -171,6 +177,11 @@ This collection uses environment variables to manage dynamic data, such as the b
     ```
   - **Note**: Stores `productId` for future requests.
 
+- **Get All Product**: Retrieves product collections.
+
+  - **Method**: `GET`
+  - **URL**: `{{baseUrl}}/product`
+
 - **Get Product**: Retrieves product details.
 
   - **Method**: `GET`
@@ -191,5 +202,53 @@ This collection uses environment variables to manage dynamic data, such as the b
     ```
 
 - **Delete Product**: Deletes the product.
+
   - **Method**: `DELETE`
   - **URL**: `{{baseUrl}}/product/{{productId}}`
+
+  ### Feedback
+
+- **Create Feedback**: Adds a new Feedback .
+
+  - **Method**: `POST`
+  - **URL**: `{{baseUrl}}/feedback`
+  - **Body**:
+
+    ```json
+    {
+      "user_id": {{userId}},
+      "vendor_id": {{vendorId}},
+      "rating": "5", // 1 - 5
+      "comment": "Comment Feedback",
+      "report_status": 0, // boolean 0|1
+
+    }
+    ```
+
+  - **Note**: Stores `feedbackId` for future requests.
+
+- **Get Feedback**: Retrieves product details.
+
+  - **Method**: `GET`
+  - **URL**: `{{baseUrl}}/feedback/{{feedbackId}}`
+
+- **Update Feedback**: Updates feedback details.
+
+  - **Method**: `PUT`
+  - **URL**: `{{baseUrl}}/feedback/{{feedbackId}}`
+  - **Body**:
+
+    ```json
+    {
+      "user_id": {{userId}},
+      "vendor_id": {{vendorId}},
+      "rating": "5", // 1 - 5
+      "comment": "Comment Feedback",
+      "report_status": 0, // boolean 0|1
+
+    }
+    ```
+
+- **Delete Feedback**: Deletes the feedback.
+  - **Method**: `DELETE`
+  - **URL**: `{{baseUrl}}/feedback/{{feedbackId}}`

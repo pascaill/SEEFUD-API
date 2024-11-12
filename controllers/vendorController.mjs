@@ -1,5 +1,23 @@
 import db from "../connection/connection.mjs";
 
+export const getAllVendor = async (req, res) => {
+  try {
+    const [result] = await db.query("SELECT * FROM vendor");
+    return res.status(200).json({
+      status: "success",
+      message: "Vendor Collection",
+      data: result,
+    });
+  } catch (error) {
+    console.error("collect all vendor error:", error);
+    return res.status(500).json({
+      status: "failed",
+      message: "Failed to get all vendor",
+      error: error.message,
+    });
+  }
+};
+
 export const createVendor = async (req, res) => {
   const { user_id, store_name, description, location } = req.body;
 

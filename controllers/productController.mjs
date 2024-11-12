@@ -1,5 +1,23 @@
 import db from "../connection/connection.mjs";
 
+export const getAllProduct = async (req, res) => {
+  try {
+    const [results] = await db.query("SELECT * FROM product");
+    return res.status(200).json({
+      status: "success",
+      message: "Product Collection",
+      data: results,
+    });
+  } catch (error) {
+    console.error("collect all product error:", error);
+    return res.status(500).json({
+      status: "failed",
+      message: "Failed to get all product",
+      error: error.message,
+    });
+  }
+};
+
 export const createProduct = async (req, res) => {
   const { vendor_id, name, description, price, qr_code } = req.body;
 

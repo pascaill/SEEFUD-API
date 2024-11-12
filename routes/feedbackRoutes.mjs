@@ -5,7 +5,7 @@ import {
   getFeedback,
   updateFeedback,
   deleteFeedback,
-} from "../controllers/vendorController.mjs";
+} from "../controllers/feedbackController.mjs";
 
 import {
   authenticateToken,
@@ -24,13 +24,16 @@ router.post(
   authorizeRole(mustRole),
   createFeedback
 );
-router.get("/feedback/:id", authenticateToken, getFeedback);
+
+router.get("/feedback/:id", getFeedback);
+
 router.put(
   "/feedback/:id",
   authenticateToken,
   authorizeRole(mustRole),
   updateFeedback
 );
+
 router.delete(
   "/feedback/:id",
   authenticateToken,

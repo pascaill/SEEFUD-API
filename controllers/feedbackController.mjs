@@ -7,7 +7,7 @@ export const createFeedback = async (req, res) => {
     return res.status(400).json({
       status: "failed",
       message:
-        "Please provide user_id,vendor_id, rating, comment, and report_status ",
+        "Please provide user_id,vendor_id, rating, comment, and report_status",
     });
   }
 
