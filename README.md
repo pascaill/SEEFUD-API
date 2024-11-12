@@ -1,4 +1,4 @@
-# To do checcklist:
+# **To do checklist:**
 - ~~User Endpoint (Consumer, Vendor, Admin)~~
 - ~~Feedback Endpoint~~
 - ~~Connect to Database (mysql)~~
