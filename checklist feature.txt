@@ -1,0 +1,9 @@
+# To do checklist:
+- User Endpoint (Consumer, Vendor, Admin) -> Done
+- Feedback Endpoint -> Done
+- Connect to Database (mysql) -> Done
+- Connect to Cloud (Google Cloud) -> Done
+- Search Feature
+- Review
+- QR Scanner
+
