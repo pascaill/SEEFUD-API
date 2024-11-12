@@ -53,7 +53,7 @@ This collection uses environment variables to manage dynamic data, such as the b
       "name": "testuser",
       "email": "test@example.com",
       "password": "password123",
-      "role": "vendor"
+      "role": "vendor" // admin|vendor|customer
     }
     ```
 
