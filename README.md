@@ -13,7 +13,7 @@ This guide provides instructions on how to use the SeeFud Management API Postman
   - [Vendor Dashboard](#vendor-dashboard)
   - [Vendor](#vendor)
   - [Product](#product)
-- [Running Tests](#running-tests)
+
 
 ## Prerequisites
 
@@ -65,8 +65,7 @@ This collection uses environment variables to manage dynamic data, such as the b
     ```json
     {
       "email": "test@example.com",
-      "password": "password123",
-      "role": "vendor"
+      "password": "password123"
     }
     ```
   - **Note**: This request stores `authToken` and `userId` for use in other requests.
