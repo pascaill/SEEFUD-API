@@ -1,3 +1,5 @@
+# SeeFud Management API Testing Guide
+
 This guide provides instructions on how to use the SeeFud Management API Postman collection to test various API endpoints related to user authentication, profile management, vendor operations, and product management. Follow the steps below to import the collection and execute each endpoint.
 
 ## Table of Contents
