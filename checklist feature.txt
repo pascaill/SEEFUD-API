@@ -6,4 +6,5 @@
 - Search Feature
 - Review
 - QR Scanner
+- Komunitas (Show All AMATI Community , Sertifikat Halal)
 
