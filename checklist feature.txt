@@ -6,5 +6,6 @@
 - Search Feature
 - Review
 - QR Scanner
-- Butuh api komunitas berarti ya( Tampilin semua vendor yang tergabung AMATi)
+- Komunitas (Show All AMATI Community , Sertifikat Halal)
+
 
