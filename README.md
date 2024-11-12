@@ -1,3 +1,12 @@
+# To do checcklist:
+- ~~User Endpoint (Consumer, Vendor, Admin)~~
+- ~~Feedback Endpoint~~
+- ~~Connect to Database (mysql)~~
+- ~~Connect to Cloud (Google Cloud)~~
+- Search Feature
+- Review
+- QR Scanner
+
 # SeeFud Management API Testing Guide
 
 This guide provides instructions on how to use the SeeFud Management API Postman collection to test various API endpoints related to user authentication, profile management, vendor operations, and product management. Follow the steps below to import the collection and execute each endpoint.
