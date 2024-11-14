@@ -125,15 +125,34 @@ export const updateVendor = async (req, res) => {
 
 export const deleteVendor = async (req, res) => {
   const { id } = req.params;
+  const { email } = req.body;
+
+  if (!email) {
+    return res.status(400).json({
+      status: "failed",
+      message: "Email is required",
+    });
+  }
 
   try {
-    const [result] = await db.query("DELETE FROM vendor WHERE id = ?", [id]);
+    // Check if a vendor with the given id and email exists
+    const [vendor] = await db.query(
+      "SELECT * FROM vendor v JOIN users u ON v.user_id = u.id WHERE v.id= ? AND u.email = ?",
+      [id, email]
+    );
 
-    if (result.affectedRows === 0) {
-      return res
-        .status(404)
-        .json({ status: "failed", message: "Vendor not found" });
+    if (vendor.length === 0) {
+      return res.status(404).json({
+        status: "failed",
+        message: "Vendor not found with the specified  email",
+      });
     }
+
+    // Proceed with deletion if vendor exists
+    await db.query(
+      "DELETE v FROM vendor v JOIN users u ON v.user_id = u.id WHERE v.id= ? AND u.email = ?",
+      [id, email]
+    );
 
     return res.status(200).json({
       status: "success",
