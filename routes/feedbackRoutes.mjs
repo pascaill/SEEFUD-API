@@ -5,6 +5,7 @@ import {
   getFeedback,
   updateFeedback,
   deleteFeedback,
+  upload,
 } from "../controllers/feedbackController.mjs";
 
 import {
@@ -19,6 +20,7 @@ const mustRole = "customer";
 router.post(
   "/feedback",
   authenticateToken,
+  upload.single("foto"),
   authorizeRole(mustRole),
   createFeedback
 );
@@ -28,6 +30,7 @@ router.get("/feedback/:id", getFeedback);
 router.put(
   "/feedback/:id",
   authenticateToken,
+  upload.single("foto"),
   authorizeRole(mustRole),
   updateFeedback
 );
