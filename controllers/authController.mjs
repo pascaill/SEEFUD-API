@@ -17,7 +17,7 @@ const generateToken = (user) => {
   );
 };
 
-export const register = async (req, res) => {
+export const registerUserVendor = async (req, res) => {
   const roles = ["vendor", "customer"];
   const { name, email, password, role } = req.body;
   if (!name || !email || !password || !role) {
@@ -62,7 +62,7 @@ export const register = async (req, res) => {
   }
 };
 
-export const login = async (req, res) => {
+export const loginUserVendor = async (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) {
     return res.status(400).json({ error: "Please provide email and password" });
@@ -104,11 +104,11 @@ export const login = async (req, res) => {
   }
 };
 
-export const logout = (req, res) => {
+export const logoutUserVendor = (req, res) => {
   return res.status(200).json({ message: "User logged out successfully" });
 };
 
-export const deleteAccount = async (req, res) => {
+export const deleteAccountUserVendor = async (req, res) => {
   const { id, email: userEmail } = req.user;
   const { email } = req.body;
 
@@ -133,7 +133,7 @@ export const deleteAccount = async (req, res) => {
     });
   }
 };
-export const updateProfile = async (req, res) => {
+export const updateProfileUserVendor = async (req, res) => {
   const { id } = req.user;
   const { name, email } = req.body;
 
