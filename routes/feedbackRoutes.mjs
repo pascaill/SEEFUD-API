@@ -16,8 +16,6 @@ const router = express.Router();
 
 const mustRole = "customer";
 
-// bisa di sesuaikan untuk hak akses role nya
-
 router.post(
   "/feedback",
   authenticateToken,

@@ -135,7 +135,6 @@ export const deleteVendor = async (req, res) => {
   }
 
   try {
-    // Check if a vendor with the given id and email exists
     const [vendor] = await db.query(
       "SELECT * FROM vendor v JOIN users u ON v.user_id = u.id WHERE v.id= ? AND u.email = ?",
       [id, email]
@@ -147,8 +146,6 @@ export const deleteVendor = async (req, res) => {
         message: "Vendor not found with the specified  email",
       });
     }
-
-    // Proceed with deletion if vendor exists
     await db.query(
       "DELETE v FROM vendor v JOIN users u ON v.user_id = u.id WHERE v.id= ? AND u.email = ?",
       [id, email]

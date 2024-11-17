@@ -18,7 +18,7 @@ const generateToken = (user) => {
 };
 
 export const register = async (req, res) => {
-  const roles = ["vendor", "customer", "admin"];
+  const roles = ["vendor", "customer"];
   const { name, email, password, role } = req.body;
   if (!name || !email || !password || !role) {
     return res
