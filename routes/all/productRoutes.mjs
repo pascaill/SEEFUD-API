@@ -4,16 +4,22 @@ import {
   getProduct,
   updateProduct,
   deleteProduct,
+  createProductWithIngredients,
   getAllProducts,
-} from "../controllers/productController.mjs";
+} from "../../controllers/productController.mjs";
 
-import { authenticateToken } from "../middleware/authMiddleware.mjs";
+import { authenticateToken } from "../../middleware/authMiddleware.mjs";
 
 const router = express.Router();
 
-router.get("/product", getAllProducts);
+router.get("/product", authenticateToken, getAllProducts);
 router.post("/product", authenticateToken, createProduct);
-router.get("/product/:id", getProduct);
+router.post(
+  "/productAndIngredients",
+  authenticateToken,
+  createProductWithIngredients
+);
+router.get("/product/:id", authenticateToken, getProduct);
 router.put("/product/:id", authenticateToken, updateProduct);
 router.delete("/product/:id", authenticateToken, deleteProduct);
 

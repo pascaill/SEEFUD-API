@@ -14,6 +14,7 @@ This guide provides instructions on how to use the SeeFud Management API Postman
   - [Vendor](#vendor)
   - [Product](#product)
   - [Feedback](#feedback)
+  - [Ingredients](#ingredients)
 
 ## Prerequisites
 
@@ -156,16 +157,71 @@ This collection uses environment variables to manage dynamic data, such as the b
   - **Method**: `POST`
   - **URL**: `{{baseUrl}}/product`
   - **Body**:
+
+    // Required Format
+
     ```json
     {
       "vendor_id": {{vendorId}},
       "name": "Product Example",
       "description": "Product description",
       "price": 100.50,
-      "qr_code": "SampleQRCodeData"
+      "qr_code": "SampleQRCodeData",
     }
     ```
+
+    // optional format (with a image uploaded)
+
+    ```json
+    {
+     "vendor_id": {{vendorId}},
+     "name": "Product Example With Image",
+     "description": "Product description",
+     "price": 100.50,
+     "qr_code": "SampleQRCodeData",
+     "image" : "<File> with a required type is image/"
+    }
+    ```
+
   - **Note**: Stores `productId` for future requests.
+
+- **Create Product with Ingredients**
+
+  **Endpoint**
+  `POST /productsWithIngredient`
+
+  **Deskripsi**
+  Endpoint ini digunakan untuk membuat produk baru sekaligus menghubungkan produk tersebut dengan bahan-bahan (`ingredients`). Data produk akan disimpan di tabel `product`, dan hubungan antara produk dan bahan akan disimpan di tabel pivot `ingredients_product`.
+
+  **Headers**
+  **Authorization**: Bearer `<JWT_TOKEN>`  
+  Diperlukan untuk autentikasi dan menentukan `vendor_id` dari token JWT.
+
+  **Request Parameters**
+  Tidak ada parameter di URL.
+
+  **Request Body**
+  Request body dikirim dalam format `multipart/form-data` untuk memungkinkan pengunggahan file gambar. Berikut adalah daftar parameter yang harus dikirim:
+
+  | Parameter     | Tipe          | Wajib | Deskripsi                                                                     |
+  | ------------- | ------------- | ----- | ----------------------------------------------------------------------------- |
+  | `name`        | String        | Yes   | Nama produk.                                                                  |
+  | `description` | String        | Yes   | Deskripsi produk.                                                             |
+  | `price`       | Number        | Yes   | Harga produk.                                                                 |
+  | `qr_code`     | String        | Yes   | QR code untuk produk.                                                         |
+  | `image`       | File (image)  | No    | Gambar produk (opsional). Disimpan di folder `public/assets/products`.        |
+  | `ingredients` | Array of JSON | No    | Daftar bahan yang digunakan. Setiap elemen harus berupa JSON dengan struktur: |
+  |               |               |       | - `ingredient_id`: ID bahan dari tabel `ingredients`.                         |
+  |               |               |       | - `qty`: Jumlah bahan yang digunakan.                                         |
+
+  #### **Contoh Struktur JSON untuk Ingredients**
+
+  ```json
+  [
+    { "ingredient_id": 1, "qty": 2 },
+    { "ingredient_id": 3, "qty": 5 }
+  ]
+  ```
 
 - **Get All Product**: Retrieves product collections.
 
@@ -242,3 +298,50 @@ This collection uses environment variables to manage dynamic data, such as the b
 - **Delete Feedback**: Deletes the feedback.
   - **Method**: `DELETE`
   - **URL**: `{{baseUrl}}/feedback/{{feedbackId}}`
+
+### Ingredients
+
+- **Create Ingredient**: Adds a new ingredient.
+
+  **Endpoint**
+  `POST /ingredient`
+
+  **Request Body**
+  Request body dikirim dalam format `multipart/form-data` untuk memungkinkan pengunggahan file gambar. Berikut adalah daftar parameter yang harus dikirim:
+
+  | Parameter     | Tipe         | Wajib | Deskripsi                                                                     |
+  | ------------- | ------------ | ----- | ----------------------------------------------------------------------------- |
+  | `name`        | String       | Yes   | Nama Ingredient.                                                              |
+  | `description` | String       | Yes   | Deskripsi ingredient.                                                         |
+  | `qty`         | Number       | Yes   | Kuantitas ingredient.                                                         |
+  | `Unit`        | String       | Yes   | Unit ingredient (gr, kg, dll).                                                |
+  | `image`       | File (image) | No    | Gambar ingredient (opsional). Disimpan di folder `public/assets/ingredients`. |
+
+- **Get All Ingredient**: Retrieves ingredient collections.
+
+  - **Method**: `GET`
+  - **URL**: `{{baseUrl}}/ingredient`
+
+- **Get Ingredient**: Retrieves ingredient details.
+
+  - **Method**: `GET`
+  - **URL**: `{{baseUrl}}/ingredient/{{ingredientId}}`
+
+- **Update Ingredient**: Updates ingredient details.
+
+  - **Method**: `PUT`
+  - **URL**: `{{baseUrl}}/ingredient/{{ingredientId}}`
+  - **Body**:
+    ```json
+    {
+      "name": "Updated Ingredient Name",
+      "description": "Updated ingredient description",
+      "qty": number,
+      "unit": "satuan"
+    }
+    ```
+
+- **Delete Ingredient**: Deletes the ingredient.
+
+  - **Method**: `DELETE`
+  - **URL**: `{{baseUrl}}/ingredient/{{ingredientId}}`

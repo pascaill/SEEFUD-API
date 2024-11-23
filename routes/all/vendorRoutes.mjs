@@ -6,12 +6,12 @@ import {
   updateVendor,
   deleteVendor,
   getAllVendor,
-} from "../controllers/vendorController.mjs";
+} from "../../controllers/vendorController.mjs";
 
 import {
   authenticateToken,
   authorizeRole,
-} from "../middleware/authMiddleware.mjs";
+} from "../../middleware/authMiddleware.mjs";
 
 const router = express.Router();
 

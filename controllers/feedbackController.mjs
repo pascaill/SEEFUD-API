@@ -56,14 +56,18 @@ export const getFeedback = async (req, res) => {
     const [rows] = await db.query("SELECT * FROM feedback WHERE id = ?", [id]);
 
     if (rows.length === 0) {
-      return res.status(404).json({ status: "failed", message: "Feedback not found" });
+      return res
+        .status(404)
+        .json({ status: "failed", message: "Feedback not found" });
     }
 
     const feedback = rows[0];
 
     // Konversi foto dari BLOB ke base64 jika ada
     if (feedback.foto) {
-      feedback.foto = `data:image/jpeg;base64,${feedback.foto.toString("base64")}`;
+      feedback.foto = `data:image/jpeg;base64,${feedback.foto.toString(
+        "base64"
+      )}`;
     }
 
     return res.status(200).json({
@@ -106,7 +110,9 @@ export const updateFeedback = async (req, res) => {
     );
 
     if (result.affectedRows === 0) {
-      return res.status(404).json({ status: "failed", message: "Feedback not found" });
+      return res
+        .status(404)
+        .json({ status: "failed", message: "Feedback not found" });
     }
 
     return res.status(200).json({
@@ -131,7 +137,9 @@ export const deleteFeedback = async (req, res) => {
     const [result] = await db.query("DELETE FROM feedback WHERE id = ?", [id]);
 
     if (result.affectedRows === 0) {
-      return res.status(404).json({ status: "failed", message: "Feedback not found" });
+      return res
+        .status(404)
+        .json({ status: "failed", message: "Feedback not found" });
     }
 
     return res.status(200).json({

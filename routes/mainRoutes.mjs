@@ -1,19 +1,22 @@
 import express from "express";
-import authRoutes from "./authRoutes.mjs";
-import vendorRoutes from "./vendorRoutes.mjs";
-import productRoutes from "./productRoutes.mjs";
-import feedbackRoutes from "./feedbackRoutes.mjs";
-import adminAuthRoutes from "./adminAuthRoutes";
-import adminRoutes from "./adminRoutes"
+import authRoutes from "./all/authRoutes.mjs";
+import vendorRoutes from "./all/vendorRoutes.mjs";
+import productRoutes from "./all/productRoutes.mjs";
+import ingredientRoutes from "./all/ingredientRoutes.mjs";
+import feedbackRoutes from "./all/feedbackRoutes.mjs";
+import adminAuthRoutes from "./all/adminAuthRoutes.mjs";
+import adminRoutes from "./all/adminRoutes.mjs";
 
 const router = express.Router();
 
-// Gabungkan semua rute
-router.use(authRoutes);
-router.use(vendorRoutes);
-router.use(productRoutes);
-router.use(feedbackRoutes);
-router.use(adminRoutes);
-router.use(adminAuthRoutes);
+router.use({
+  authRoutes,
+  vendorRoutes,
+  productRoutes,
+  ingredientRoutes,
+  feedbackRoutes,
+  adminAuthRoutes,
+  adminRoutes,
+});
 
 export default router;
