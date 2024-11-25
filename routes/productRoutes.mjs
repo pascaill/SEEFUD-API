@@ -1,20 +1,19 @@
 import express from "express";
 import {
+  getAllProducts,
   createProduct,
-  getProduct,
   updateProduct,
   deleteProduct,
-  getAllProducts,
 } from "../controllers/productController.mjs";
-
-import { authenticateToken } from "../middleware/authMiddleware.mjs";
+import { authenticateToken } from "../middlewares/authMiddleware.mjs";
+import { isVendor } from "../middlewares/roleMiddleware.mjs";
 
 const router = express.Router();
 
-router.get("/product", getAllProducts);
-router.post("/product", authenticateToken, createProduct);
-router.get("/product/:id", getProduct);
-router.put("/product/:id", authenticateToken, updateProduct);
-router.delete("/product/:id", authenticateToken, deleteProduct);
+// Routes
+router.get("/:vendorId/products", getAllProducts); // Public access for users
+router.post("/products", authenticateToken, isVendor, createProduct); // Vendor only
+router.patch("/products/:id", authenticateToken, isVendor, updateProduct); // Vendor only
+router.delete("/products/:id", authenticateToken, isVendor, deleteProduct); // Vendor only
 
 export default router;

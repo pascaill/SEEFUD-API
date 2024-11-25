@@ -1,20 +1,11 @@
 import express from "express";
-import { registerAdmin, loginAdmin, logoutAdmin } from "../controllers/adminAuthControllers.mjs";
-import { authenticateToken, authorizeRole } from "../middleware/authMiddleware.mjs";
+import { registerAdmin, loginAdmin, logoutAdmin } from "../controllers/adminController.js";
 
 const router = express.Router();
 
-// Admin Login
+// Admin authentication routes
+router.post("/register", registerAdmin);
 router.post("/login", loginAdmin);
-router.post(
-  "/register",
-  authenticateToken,
-  authorizeRole("admin"),
-  registerAdmin
-);
-router.post("/logut",
-    authenticateToken,
-    authorizeRole("admin"), 
-    logoutAdmin);
+router.post("/logout", logoutAdmin);
 
 export default router;

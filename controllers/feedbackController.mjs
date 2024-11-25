@@ -12,7 +12,7 @@ export const createFeedback = async (req, res) => {
   const { rating, comment, report_status } = req.body;
   const foto = req.file ? req.file.buffer : null; // Ambil data file sebagai buffer
 
-  if (!rating || !comment || !report_status) {
+  if (!rating || !comment || typeof report_status === "undefined") {
     return res.status(400).json({
       status: "failed",
       message: "Please provide rating, comment, and report_status",
@@ -56,7 +56,9 @@ export const getFeedback = async (req, res) => {
     const [rows] = await db.query("SELECT * FROM feedback WHERE id = ?", [id]);
 
     if (rows.length === 0) {
-      return res.status(404).json({ status: "failed", message: "Feedback not found" });
+      return res
+        .status(404)
+        .json({ status: "failed", message: "Feedback not found" });
     }
 
     const feedback = rows[0];
@@ -86,7 +88,7 @@ export const updateFeedback = async (req, res) => {
   const { rating, comment, report_status } = req.body;
   const foto = req.file ? req.file.buffer : null; // Jika ada foto baru
 
-  if (!rating && !comment && !report_status && !foto) {
+  if (!rating && !comment && typeof report_status === "undefined" && !foto) {
     return res.status(400).json({
       status: "failed",
       message: "Please provide data to update",
@@ -106,7 +108,9 @@ export const updateFeedback = async (req, res) => {
     );
 
     if (result.affectedRows === 0) {
-      return res.status(404).json({ status: "failed", message: "Feedback not found" });
+      return res
+        .status(404)
+        .json({ status: "failed", message: "Feedback not found" });
     }
 
     return res.status(200).json({
@@ -131,7 +135,9 @@ export const deleteFeedback = async (req, res) => {
     const [result] = await db.query("DELETE FROM feedback WHERE id = ?", [id]);
 
     if (result.affectedRows === 0) {
-      return res.status(404).json({ status: "failed", message: "Feedback not found" });
+      return res
+        .status(404)
+        .json({ status: "failed", message: "Feedback not found" });
     }
 
     return res.status(200).json({

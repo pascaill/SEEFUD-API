@@ -15,6 +15,7 @@ const generateToken = (admin) => {
   );
 };
 
+// Register Admin
 export const registerAdmin = async (req, res) => {
   const { name, email, password } = req.body;
 
@@ -22,9 +23,22 @@ export const registerAdmin = async (req, res) => {
     return res.status(400).json({ error: "Please provide name, email, and password" });
   }
 
-  try {
-    const hashedPassword = await bcrypt.hash(password, 10);
+  const isValidEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
 
+  if (!isValidEmail(email)) {
+    return res.status(400).json({ error: "Invalid email format" });
+  }
+
+  try {
+    const [existingAdmin] = await db.query("SELECT * FROM users WHERE email = ?", [email]);
+    if (existingAdmin.length > 0) {
+      return res.status(409).json({ error: "Email is already registered" });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
     const [result] = await db.query(
       "INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, 'admin')",
       [name, email, hashedPassword]
@@ -47,13 +61,11 @@ export const registerAdmin = async (req, res) => {
     });
   } catch (error) {
     console.error("Admin Registration Error:", error);
-    return res
-      .status(500)
-      .json({ error: "Failed to register admin. Please try again." });
+    return res.status(500).json({ error: "Failed to register admin. Please try again." });
   }
 };
 
-// Admin Login
+// Login Admin
 export const loginAdmin = async (req, res) => {
   const { email, password } = req.body;
 
@@ -95,6 +107,13 @@ export const loginAdmin = async (req, res) => {
   }
 };
 
+// Logout Admin
 export const logoutAdmin = (req, res) => {
-    return res.status(200).json({ message: "User logged out successfully" });
-  };
+  try {
+    // Token blacklist logic can be added here
+    return res.status(200).json({ message: "Admin logged out successfully" });
+  } catch (error) {
+    console.error("Logout Error:", error);
+    return res.status(500).json({ error: "Failed to logout. Please try again." });
+  }
+};

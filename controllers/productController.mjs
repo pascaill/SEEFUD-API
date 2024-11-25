@@ -1,36 +1,36 @@
 import db from "../connection/connection.mjs";
 
-// Fungsi untuk mendapatkan semua produk milik vendor
+// Fungsi untuk mendapatkan semua produk milik vendor tertentu (dapat diakses oleh semua user)
 export const getAllProducts = async (req, res) => {
-  const vendor_id = req.user.id; // Ambil ID vendor dari token JWT
+  const { vendorId } = req.params; // ID vendor dari parameter URL
 
   try {
-    const [results] = await db.query("SELECT * FROM product WHERE vendor_id = ?", [vendor_id]);
+    const [results] = await db.query("SELECT * FROM product WHERE vendor_id = ?", [vendorId]);
 
     return res.status(200).json({
       status: "success",
-      message: "Product Collection",
+      message: "Product collection retrieved successfully",
       data: results,
     });
   } catch (error) {
-    console.error("Collect all products error:", error);
+    console.error("Get all products error:", error);
     return res.status(500).json({
       status: "failed",
-      message: "Failed to get all products",
+      message: "Failed to get products",
       error: error.message,
     });
   }
 };
 
-// Fungsi untuk membuat produk
+// Fungsi untuk membuat produk (hanya vendor yang dapat mengakses)
 export const createProduct = async (req, res) => {
   const vendor_id = req.user.id; // Ambil ID vendor dari token JWT
   const { name, description, price, qr_code } = req.body;
 
-  if (!name || !description || !price || !qr_code) {
+  if (!name || !description || typeof price !== "number" || !qr_code) {
     return res.status(400).json({
       status: "failed",
-      message: "Please provide name, description, price, and qr_code",
+      message: "Please provide valid name, description, price, and qr_code",
     });
   }
 
@@ -42,7 +42,7 @@ export const createProduct = async (req, res) => {
 
     return res.status(201).json({
       status: "success",
-      message: "Product created",
+      message: "Product created successfully",
       data: {
         id: result.insertId,
         vendor_id,
@@ -62,39 +62,13 @@ export const createProduct = async (req, res) => {
   }
 };
 
-// Fungsi untuk mendapatkan detail produk
-export const getProduct = async (req, res) => {
-  const vendor_id = req.user.id; // Ambil ID vendor dari token JWT
-  const { id } = req.params;
-
-  try {
-    const [rows] = await db.query("SELECT * FROM product WHERE id = ? AND vendor_id = ?", [id, vendor_id]);
-
-    if (rows.length === 0) {
-      return res.status(404).json({ status: "failed", message: "Product not found" });
-    }
-
-    return res.status(200).json({
-      status: "success",
-      data: rows[0],
-    });
-  } catch (error) {
-    console.error("Get product error:", error);
-    return res.status(500).json({
-      status: "failed",
-      message: "Failed to retrieve product",
-      error: error.message,
-    });
-  }
-};
-
-// Fungsi untuk memperbarui produk
+// Fungsi untuk memperbarui produk (hanya vendor yang dapat mengakses)
 export const updateProduct = async (req, res) => {
   const vendor_id = req.user.id; // Ambil ID vendor dari token JWT
   const { id } = req.params;
   const { name, description, price, qr_code } = req.body;
 
-  if (!name && !description && !price && !qr_code) {
+  if (!name && !description && typeof price === "undefined" && !qr_code) {
     return res.status(400).json({
       status: "failed",
       message: "Please provide data to update",
@@ -113,7 +87,10 @@ export const updateProduct = async (req, res) => {
     );
 
     if (result.affectedRows === 0) {
-      return res.status(404).json({ status: "failed", message: "Product not found" });
+      return res.status(404).json({
+        status: "failed",
+        message: "Product not found or not authorized to update",
+      });
     }
 
     return res.status(200).json({
@@ -130,16 +107,22 @@ export const updateProduct = async (req, res) => {
   }
 };
 
-// Fungsi untuk menghapus produk
+// Fungsi untuk menghapus produk (hanya vendor yang dapat mengakses)
 export const deleteProduct = async (req, res) => {
   const vendor_id = req.user.id; // Ambil ID vendor dari token JWT
   const { id } = req.params;
 
   try {
-    const [result] = await db.query("DELETE FROM product WHERE id = ? AND vendor_id = ?", [id, vendor_id]);
+    const [result] = await db.query(
+      "DELETE FROM product WHERE id = ? AND vendor_id = ?",
+      [id, vendor_id]
+    );
 
     if (result.affectedRows === 0) {
-      return res.status(404).json({ status: "failed", message: "Product not found" });
+      return res.status(404).json({
+        status: "failed",
+        message: "Product not found or not authorized to delete",
+      });
     }
 
     return res.status(200).json({
