@@ -11,72 +11,47 @@ const standardResponse = (status, message, data = null) => ({
 export const getCounts = async (req, res) => {
   try {
     const [[userCount]] = await db.query(
-      "SELECT COUNT(*) AS totalUsers FROM users WHERE role = 'user'"
+      "SELECT COUNT(*) AS totalUsers FROM users WHERE role = 'customer'"
     );
     const [[vendorCount]] = await db.query(
       "SELECT COUNT(*) AS totalVendors FROM users WHERE role = 'vendor'"
     );
 
-    return res.status(200).json(
-      standardResponse("success", "Counts retrieved successfully", {
+    return res.status(200).json({
+      status: "success",
+      message: "Counts retrieved successfully",
+      data: {
         totalUsers: userCount.totalUsers,
         totalVendors: vendorCount.totalVendors,
-      })
-    );
+      },
+    });
   } catch (error) {
-    console.error("Get counts error:", error);
-    return res
-      .status(500)
-      .json(
-        standardResponse("failed", "Could not retrieve counts", {
-          error: error.message,
-        })
-      );
+    console.error("Get counts error:", error.message);
+    return res.status(500).json({
+      status: "failed",
+      message: "Could not retrieve counts",
+    });
   }
 };
 
 // Get List of Vendors
 export const getVendors = async (req, res) => {
-  const { limit = 10, offset = 0 } = req.query;
-
   try {
     const [vendors] = await db.query(
-      `SELECT 
-        v.id AS vendorId,
-        v.name AS storeName,
-        v.description,
-        v.location,
-        v.rating,
-        v.photo AS photoUrl,
-        COUNT(f.id) AS feedbackCount
-      FROM 
-        users AS v
-      LEFT JOIN 
-        feedbacks AS f 
-      ON 
-        v.id = f.vendor_id
-      WHERE 
-        v.role = 'vendor'
-      GROUP BY 
-        v.id, v.name, v.description, v.location, v.rating, v.photo
-      LIMIT ? OFFSET ?`,
-      [parseInt(limit), parseInt(offset)]
+      "SELECT id AS vendorId, name, location, rating FROM users WHERE role = 'vendor'"
     );
 
-    return res
-      .status(200)
-      .json(
-        standardResponse("success", "Vendors retrieved successfully", vendors)
-      );
+    return res.status(200).json({
+      status: "success",
+      message: "Vendors retrieved successfully",
+      data: vendors,
+    });
   } catch (error) {
-    console.error("Get vendors error:", error);
-    return res
-      .status(500)
-      .json(
-        standardResponse("failed", "Could not retrieve vendors", {
-          error: error.message,
-        })
-      );
+    console.error("Get vendors error:", error.message);
+    return res.status(500).json({
+      status: "failed",
+      message: "Could not retrieve vendors",
+    });
   }
 };
 
@@ -115,13 +90,11 @@ export const getFeedback = async (req, res) => {
       );
   } catch (error) {
     console.error("Get feedback error:", error);
-    return res
-      .status(500)
-      .json(
-        standardResponse("failed", "Could not retrieve feedback", {
-          error: error.message,
-        })
-      );
+    return res.status(500).json(
+      standardResponse("failed", "Could not retrieve feedback", {
+        error: error.message,
+      })
+    );
   }
 };
 
@@ -146,13 +119,11 @@ export const deleteVendor = async (req, res) => {
       .json(standardResponse("success", "Vendor deleted successfully"));
   } catch (error) {
     console.error("Delete vendor error:", error);
-    return res
-      .status(500)
-      .json(
-        standardResponse("failed", "Could not delete vendor", {
-          error: error.message,
-        })
-      );
+    return res.status(500).json(
+      standardResponse("failed", "Could not delete vendor", {
+        error: error.message,
+      })
+    );
   }
 };
 
@@ -184,12 +155,10 @@ export const updateVendorRating = async (req, res) => {
       .json(standardResponse("success", "Vendor rating updated successfully"));
   } catch (error) {
     console.error("Update vendor rating error:", error);
-    return res
-      .status(500)
-      .json(
-        standardResponse("failed", "Could not update vendor rating", {
-          error: error.message,
-        })
-      );
+    return res.status(500).json(
+      standardResponse("failed", "Could not update vendor rating", {
+        error: error.message,
+      })
+    );
   }
 };

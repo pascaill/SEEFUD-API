@@ -5,8 +5,8 @@ import {
   updateFeedback,
   deleteFeedback,
   upload,
-} from "../controllers/feedbackController.mjs";
-import { authenticateToken } from "../middleware/authMiddleware.mjs";
+} from "../../controllers/feedbackController.mjs";
+import { authenticateToken } from "../../middleware/authMiddleware.mjs";
 
 const router = express.Router();
 

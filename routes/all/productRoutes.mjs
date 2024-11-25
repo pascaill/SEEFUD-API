@@ -4,9 +4,9 @@ import {
   createProduct,
   updateProduct,
   deleteProduct,
-} from "../controllers/productController.mjs";
-import { authenticateToken } from "../middlewares/authMiddleware.mjs";
-import { isVendor } from "../middlewares/roleMiddleware.mjs";
+} from "../../controllers/productController.mjs";
+import { authenticateToken } from "../../middleware/authMiddleware.mjs";
+import { isVendor } from "../../middleware/roleMiddleware.mjs";
 
 const router = express.Router();
 
