@@ -26,48 +26,39 @@ const fileFilter = (req, file, cb) => {
 // Middleware upload file
 const upload = multer({ storage, fileFilter });
 
-// Fungsi untuk mendapatkan semua produk milik vendor
+// Fungsi untuk mendapatkan semua produk milik vendor tertentu (dapat diakses oleh semua user)
 export const getAllProducts = async (req, res) => {
-  // return res.status(200).json({
-  //   ok: req.user,
-  // });
   const vendor_id = req.user.id; // Ambil ID vendor dari token JWT
 
   try {
-    const [results] = await db.query(
-      "SELECT * FROM product WHERE vendor_id = ?",
-      [vendor_id]
-    );
+    const [results] = await db.query("SELECT * FROM product WHERE vendor_id = ?", [vendor_id]);
 
     return res.status(200).json({
       status: "success",
-      message: "Product Collection",
+      message: "Product collection retrieved successfully",
       data: results,
     });
   } catch (error) {
-    console.error("Collect all products error:", error);
+    console.error("Get all products error:", error);
     return res.status(500).json({
       status: "failed",
-      message: "Failed to get all products",
+      message: "Failed to get products",
       error: error.message,
     });
   }
 };
 
 // Fungsi untuk membuat produk
-export const createProduct = [
-  upload.single("image"), // Middleware untuk upload file
-  async (req, res) => {
-    const vendor_id = req.user.id; // Ambil ID vendor dari token JWT
-    const { name, description, price, qr_code } = req.body;
-    const image = req.file ? `/images/products/${req.file.filename}` : null; // Path gambar
+export const createProduct = async (req, res) => {
+  const vendor_id = req.user.id; // Ambil ID vendor dari token JWT
+  const { name, description, price, qr_code } = req.body;
 
-    if (!name || !description || !price || !qr_code) {
-      return res.status(400).json({
-        status: "failed",
-        message: "Please provide name, description, price, and qr_code",
-      });
-    }
+  if (!name || !description || !price || !qr_code) {
+    return res.status(400).json({
+      status: "failed",
+      message: "Please provide name, description, price, and qr_code",
+    });
+  }
 
     try {
       const [result] = await db.query(
@@ -75,29 +66,27 @@ export const createProduct = [
         [vendor_id, name, description, price, qr_code, image]
       );
 
-      return res.status(201).json({
-        status: "success",
-        message: "Product created",
-        data: {
-          id: result.insertId,
-          vendor_id,
-          name,
-          description,
-          price,
-          qr_code,
-          image,
-        },
-      });
-    } catch (error) {
-      console.error("Create product error:", error);
-      return res.status(500).json({
-        status: "failed",
-        message: "Failed to create product",
-        error: error.message,
-      });
-    }
-  },
-];
+    return res.status(201).json({
+      status: "success",
+      message: "Product created",
+      data: {
+        id: result.insertId,
+        vendor_id,
+        name,
+        description,
+        price,
+        qr_code,
+      },
+    });
+  } catch (error) {
+    console.error("Create product error:", error);
+    return res.status(500).json({
+      status: "failed",
+      message: "Failed to create product",
+      error: error.message,
+    });
+  }
+};
 
 // Fungsi untuk mendapatkan detail produk
 export const getProduct = async (req, res) => {
@@ -105,15 +94,10 @@ export const getProduct = async (req, res) => {
   const { id } = req.params;
 
   try {
-    const [rows] = await db.query(
-      "SELECT * FROM product WHERE id = ? AND vendor_id = ?",
-      [id, vendor_id]
-    );
+    const [rows] = await db.query("SELECT * FROM product WHERE id = ? AND vendor_id = ?", [id, vendor_id]);
 
     if (rows.length === 0) {
-      return res
-        .status(404)
-        .json({ status: "failed", message: "Product not found" });
+      return res.status(404).json({ status: "failed", message: "Product not found" });
     }
 
     return res.status(200).json({
@@ -131,20 +115,17 @@ export const getProduct = async (req, res) => {
 };
 
 // Fungsi untuk memperbarui produk
-export const updateProduct = [
-  upload.single("image"), // Middleware untuk upload file
-  async (req, res) => {
-    const vendor_id = req.user.id;
-    const { id } = req.params;
-    const { name, description, price, qr_code } = req.body;
-    const image = req.file ? `/images/products/${req.file.filename}` : null;
+export const updateProduct = async (req, res) => {
+  const vendor_id = req.user.id; // Ambil ID vendor dari token JWT
+  const { id } = req.params;
+  const { name, description, price, qr_code } = req.body;
 
-    if (!name && !description && !price && !qr_code && !image) {
-      return res.status(400).json({
-        status: "failed",
-        message: "Please provide data to update",
-      });
-    }
+  if (!name && !description && !price && !qr_code) {
+    return res.status(400).json({
+      status: "failed",
+      message: "Please provide data to update",
+    });
+  }
 
     try {
       // Ambil gambar lama untuk dihapus jika ada gambar baru
@@ -177,11 +158,9 @@ export const updateProduct = [
         [name, description, price, qr_code, image, id, vendor_id]
       );
 
-      if (result.affectedRows === 0) {
-        return res
-          .status(404)
-          .json({ status: "failed", message: "Product not found" });
-      }
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ status: "failed", message: "Product not found" });
+    }
 
       return res.status(200).json({
         status: "success",
@@ -198,50 +177,16 @@ export const updateProduct = [
   },
 ];
 
-// Fungsi untuk menghapus produk
+// Fungsi untuk menghapus produk (hanya vendor yang dapat mengakses)
 export const deleteProduct = async (req, res) => {
   const vendor_id = req.user.id; // Ambil ID vendor dari token JWT
   const { id } = req.params;
 
   try {
-    // Cek apakah produk ada dan dapatkan data gambar
-    const [rows] = await db.query(
-      "SELECT image FROM product WHERE id = ? AND vendor_id = ?",
-      [id, vendor_id]
-    );
-
-    if (rows.length === 0) {
-      return res
-        .status(404)
-        .json({ status: "failed", message: "Product not found" });
-    }
-
-    const imagePath = rows[0].image; // Path gambar dari database
-
-    // Hapus produk dari database
-    const [result] = await db.query(
-      "DELETE FROM product WHERE id = ? AND vendor_id = ?",
-      [id, vendor_id]
-    );
+    const [result] = await db.query("DELETE FROM product WHERE id = ? AND vendor_id = ?", [id, vendor_id]);
 
     if (result.affectedRows === 0) {
-      return res
-        .status(404)
-        .json({ status: "failed", message: "Product not found" });
-    }
-
-    // Hapus file gambar jika ada
-    if (imagePath) {
-      const absolutePath = path.join(process.cwd(), "public", imagePath);
-      try {
-        await fs.unlink(absolutePath); // Hapus file
-        console.log(`Image file deleted: ${absolutePath}`);
-      } catch (fileError) {
-        console.error(
-          `Failed to delete image file: ${absolutePath}`,
-          fileError
-        );
-      }
+      return res.status(404).json({ status: "failed", message: "Product not found" });
     }
 
     return res.status(200).json({
