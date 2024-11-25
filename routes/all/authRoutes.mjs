@@ -5,8 +5,8 @@ import {
   logoutUserVendor,
   updateProfileUserVendor,
   deleteAccountUserVendor,
-} from "../controllers/authController.mjs";
-import { authenticateToken } from "../middleware/authMiddleware.mjs";
+} from "../../controllers/authController.mjs";
+import { authenticateToken } from "../../middleware/authMiddleware.mjs";
 
 const router = express.Router();
 

@@ -425,6 +425,13 @@
           "name": "Get All Product",
           "request": {
             "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}",
+                "type": "text"
+              }
+            ],
 
             "url": "{{baseUrl}}/product"
           }

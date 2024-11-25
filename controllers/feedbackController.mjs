@@ -65,7 +65,9 @@ export const getFeedback = async (req, res) => {
 
     // Konversi foto dari BLOB ke base64 jika ada
     if (feedback.foto) {
-      feedback.foto = `data:image/jpeg;base64,${feedback.foto.toString("base64")}`;
+      feedback.foto = `data:image/jpeg;base64,${feedback.foto.toString(
+        "base64"
+      )}`;
     }
 
     return res.status(200).json({
