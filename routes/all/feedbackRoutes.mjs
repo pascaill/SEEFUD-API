@@ -1,45 +1,31 @@
 import express from "express";
-
 import {
   createFeedback,
   getFeedback,
   updateFeedback,
   deleteFeedback,
   upload,
-} from "../../controllers/feedbackController.mjs";
-
-import {
-  authenticateToken,
-  authorizeRole,
-} from "../../middleware/authMiddleware.mjs";
+} from "../controllers/feedbackController.mjs";
+import { authenticateToken } from "../middleware/authMiddleware.mjs";
 
 const router = express.Router();
 
-const mustRole = "customer";
-
 router.post(
-  "/feedback",
+  "/feedback/:vendorId",
   authenticateToken,
-  upload.single("foto"),
-  authorizeRole(mustRole),
+  upload.single("foto"), // Middleware untuk upload foto
   createFeedback
 );
 
-router.get("/feedback/:id", getFeedback);
+router.get("/feedback/:id", authenticateToken, getFeedback);
 
-router.put(
+router.patch(
   "/feedback/:id",
   authenticateToken,
   upload.single("foto"),
-  authorizeRole(mustRole),
   updateFeedback
 );
 
-router.delete(
-  "/feedback/:id",
-  authenticateToken,
-  authorizeRole(mustRole),
-  deleteFeedback
-);
+router.delete("/feedback/:id", authenticateToken, deleteFeedback);
 
 export default router;

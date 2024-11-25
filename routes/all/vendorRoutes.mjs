@@ -1,54 +1,21 @@
 import express from "express";
-
 import {
+  getAllVendor,
   createVendor,
   getVendor,
   updateVendor,
   deleteVendor,
-  getAllVendor,
-} from "../../controllers/vendorController.mjs";
-
-import {
-  authenticateToken,
-  authorizeRole,
-} from "../../middleware/authMiddleware.mjs";
+} from "../controllers/vendorController.mjs";
+import { authenticateToken } from "../middleware/authMiddleware.mjs";
+import { isVendor, isVendorOrAdmin } from "../middleware/roleMiddleware.mjs";
 
 const router = express.Router();
 
-const mustRole = "vendor";
-
-router.get(
-  "/vendor/dashboard",
-  authenticateToken,
-  authorizeRole(mustRole),
-  (req, res) => {
-    res.status(200).json({ message: "Welcome to UMKM dashboard" });
-  }
-);
-
-// bisa di sesuaikan untuk hak akses role nya
-router.post(
-  "/vendor",
-  authenticateToken,
-  authorizeRole(mustRole),
-  createVendor
-);
-
-router.get("/vendor", getAllVendor);
-router.get("/vendor/:id", getVendor);
-
-router.put(
-  "/vendor/:id",
-  authenticateToken,
-  authorizeRole(mustRole),
-  updateVendor
-);
-
-router.delete(
-  "/vendor/:id",
-  authenticateToken,
-  authorizeRole(mustRole, "admin"),
-  deleteVendor
-);
+// Routes
+router.get("/", getAllVendor); // Admin/Vendor
+router.post("/", authenticateToken, isVendor, createVendor); // Vendor only
+router.get("/:id", authenticateToken, isVendorOrAdmin, getVendor); // Admin/Vendor
+router.patch("/:id", authenticateToken, isVendorOrAdmin, updateVendor); // Admin/Vendor
+router.delete("/:id", authenticateToken, isVendorOrAdmin, deleteVendor); // Admin/Vendor
 
 export default router;

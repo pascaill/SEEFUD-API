@@ -21,3 +21,13 @@ export const authorizeRole = (...requiredRole) => {
     next();
   };
 };
+
+export const authorizeAdmin = (req, res, next) => {
+  if (req.user.role !== "admin") {
+    return res.status(403).json({
+      status: "failed",
+      message: "Access denied. Admin only.",
+    });
+  }
+  next();
+};

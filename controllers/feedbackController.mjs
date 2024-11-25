@@ -12,7 +12,7 @@ export const createFeedback = async (req, res) => {
   const { rating, comment, report_status } = req.body;
   const foto = req.file ? req.file.buffer : null; // Ambil data file sebagai buffer
 
-  if (!rating || !comment || !report_status) {
+  if (!rating || !comment || typeof report_status === "undefined") {
     return res.status(400).json({
       status: "failed",
       message: "Please provide rating, comment, and report_status",
@@ -90,7 +90,7 @@ export const updateFeedback = async (req, res) => {
   const { rating, comment, report_status } = req.body;
   const foto = req.file ? req.file.buffer : null; // Jika ada foto baru
 
-  if (!rating && !comment && !report_status && !foto) {
+  if (!rating && !comment && typeof report_status === "undefined" && !foto) {
     return res.status(400).json({
       status: "failed",
       message: "Please provide data to update",

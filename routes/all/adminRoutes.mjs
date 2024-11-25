@@ -5,33 +5,37 @@ import {
   getFeedback,
   deleteVendor,
   updateVendorRating,
-} from "../../controllers/adminController.mjs";
+} from "../controllers/adminController.mjs";
+import { validateVendorId } from "../middleware/authMiddleware.mjs";
 import {
   authenticateToken,
-  authorizeRole,
-} from "../../middleware/authMiddleware.mjs";
+  authorizeAdmin,
+} from "../middleware/authMiddleware.mjs";
 
 const router = express.Router();
 
-// Only admin can access these routes
-router.get("/counts", authenticateToken, authorizeRole("admin"), getCounts);
-router.get("/vendors", authenticateToken, authorizeRole("admin"), getVendors);
+// Routes accessible only by admin
+router.get("/counts", authenticateToken, authorizeAdmin, getCounts);
+router.get("/vendors", authenticateToken, authorizeAdmin, getVendors);
 router.get(
   "/vendors/:vendorId/feedback",
   authenticateToken,
-  authorizeRole("admin"),
+  authorizeAdmin,
+  validateVendorId,
   getFeedback
 );
 router.delete(
-  "/vendor/:vendorId",
+  "/vendors/:vendorId",
   authenticateToken,
-  authorizeRole("admin"),
+  authorizeAdmin,
+  validateVendorId,
   deleteVendor
 );
-router.put(
-  "/vendor/:vendorId/rating",
+router.patch(
+  "/vendors/:vendorId/rating",
   authenticateToken,
-  authorizeRole("admin"),
+  authorizeAdmin,
+  validateVendorId,
   updateVendorRating
 );
 

@@ -1,30 +1,33 @@
 import db from "../connection/connection.mjs";
 
+// Mendapatkan semua vendor
 export const getAllVendor = async (req, res) => {
   try {
     const [result] = await db.query("SELECT * FROM vendor");
     return res.status(200).json({
       status: "success",
-      message: "Vendor Collection",
+      message: "Vendor collection retrieved successfully",
       data: result,
     });
   } catch (error) {
-    console.error("collect all vendor error:", error);
+    console.error("Collect all vendor error:", error);
     return res.status(500).json({
       status: "failed",
-      message: "Failed to get all vendor",
+      message: "Failed to get all vendors",
       error: error.message,
     });
   }
 };
 
+// Membuat vendor baru (hanya vendor)
 export const createVendor = async (req, res) => {
-  const { user_id, store_name, description, location } = req.body;
+  const { id: user_id } = req.user; // ID vendor dari token JWT
+  const { store_name, description, location } = req.body;
 
-  if (!user_id || !store_name || !description || !location) {
+  if (!store_name || !description || !location) {
     return res.status(400).json({
       status: "failed",
-      message: "Please provide user_id, store_name, description, and location",
+      message: "Please provide store_name, description, and location",
     });
   }
 
@@ -36,7 +39,7 @@ export const createVendor = async (req, res) => {
 
     return res.status(201).json({
       status: "success",
-      message: "Vendor created",
+      message: "Vendor created successfully",
       data: {
         id: result.insertId,
         user_id,
@@ -55,6 +58,7 @@ export const createVendor = async (req, res) => {
   }
 };
 
+// Mendapatkan vendor berdasarkan ID (admin/vendor)
 export const getVendor = async (req, res) => {
   const { id } = req.params;
 
@@ -81,6 +85,7 @@ export const getVendor = async (req, res) => {
   }
 };
 
+// Memperbarui vendor (admin/vendor)
 export const updateVendor = async (req, res) => {
   const { id } = req.params;
   const { store_name, description, location } = req.body;
@@ -123,33 +128,18 @@ export const updateVendor = async (req, res) => {
   }
 };
 
+// Menghapus vendor (admin/vendor)
 export const deleteVendor = async (req, res) => {
   const { id } = req.params;
-  const { email } = req.body;
-
-  if (!email) {
-    return res.status(400).json({
-      status: "failed",
-      message: "Email is required",
-    });
-  }
 
   try {
-    const [vendor] = await db.query(
-      "SELECT * FROM vendor v JOIN users u ON v.user_id = u.id WHERE v.id= ? AND u.email = ?",
-      [id, email]
-    );
+    const [result] = await db.query("DELETE FROM vendor WHERE id = ?", [id]);
 
-    if (vendor.length === 0) {
-      return res.status(404).json({
-        status: "failed",
-        message: "Vendor not found with the specified  email",
-      });
+    if (result.affectedRows === 0) {
+      return res
+        .status(404)
+        .json({ status: "failed", message: "Vendor not found" });
     }
-    await db.query(
-      "DELETE v FROM vendor v JOIN users u ON v.user_id = u.id WHERE v.id= ? AND u.email = ?",
-      [id, email]
-    );
 
     return res.status(200).json({
       status: "success",
