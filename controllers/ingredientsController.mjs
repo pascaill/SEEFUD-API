@@ -50,7 +50,7 @@ export const createIngredient = [
   upload.single("image"), // Middleware untuk upload file
   async (req, res) => {
     const { name, description, qty, unit } = req.body;
-    const image = req.file ? `/images/ingredients/${req.file.filename}` : null; // Path gambar
+    const image = req.file ? req.file.filename : null; // Path gambar
 
     if (!name || !qty || !unit) {
       return res.status(400).json({

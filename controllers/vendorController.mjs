@@ -31,10 +31,12 @@ export const createVendor = async (req, res) => {
     });
   }
 
+  const rating = 1; // default value
+
   try {
     const [result] = await db.query(
-      "INSERT INTO vendor (user_id, store_name, description, location) VALUES (?, ?, ?, ?)",
-      [user_id, store_name, description, location]
+      "INSERT INTO vendor (user_id, store_name, description, location, rating) VALUES (?, ?, ?, ?)",
+      [user_id, store_name, description, location, rating]
     );
 
     return res.status(201).json({
@@ -46,6 +48,7 @@ export const createVendor = async (req, res) => {
         store_name,
         description,
         location,
+        rating,
       },
     });
   } catch (error) {
@@ -76,7 +79,7 @@ export const getVendor = async (req, res) => {
       data: rows[0],
     });
   } catch (error) {
-    console.error("Get vendor error:", error);
+    // console.error("Get vendor error:", error);
     return res.status(500).json({
       status: "failed",
       message: "Failed to retrieve vendor",

@@ -1,16 +1,25 @@
 import db from "../connection/connection.mjs";
 import multer from "multer";
-
+import path from "path";
 // Konfigurasi Multer untuk menyimpan file di memori
-const storage = multer.memoryStorage();
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const uploadPath = path.join(process.cwd(), "public/images/feedback");
+    cb(null, uploadPath); // Direktori penyimpanan
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    cb(null, uniqueSuffix + path.extname(file.originalname)); // Nama file unik
+  },
+});
 export const upload = multer({ storage });
 
 // Fungsi untuk membuat feedback
 export const createFeedback = async (req, res) => {
   const user_id = req.user.id; // Ambil dari middleware autentikasi
-  const vendor_id = req.params.vendorId; // Ambil dari parameter URL
+  const vendor_id = parseInt(req.params.id); // Ambil dari parameter URL
   const { rating, comment, report_status } = req.body;
-  const foto = req.file ? req.file.buffer : null; // Ambil data file sebagai buffer
+  const foto = req.file ? req.file.filename : null; // Path gambarAmbil data file sebagai buffer
 
   if (!rating || !comment || typeof report_status === "undefined") {
     return res.status(400).json({
@@ -19,11 +28,24 @@ export const createFeedback = async (req, res) => {
     });
   }
 
+  // validate params vendor id
+  const [isExistVendor] = await db.query("SELECT * FROM vendor WHERE id = ?", [
+    vendor_id,
+  ]);
+
+  // Check if vendor exists
+  if (isExistVendor.length === 0) {
+    return res.status(400).json({
+      status: "failed",
+      message: "Vendor is not found",
+    });
+  }
+
   try {
     // Simpan data ke database
     const [result] = await db.query(
-      "INSERT INTO feedback (user_id, vendor_id, rating, comment, foto, report_status) VALUES (?, ?, ?, ?, ?, ?)",
-      [user_id, vendor_id, rating, comment, foto, report_status]
+      "INSERT INTO feedback (user_id, vendor_id, rating, comment, report_status, foto) VALUES (?, ?, ?, ?, ?, ?)",
+      [user_id, vendor_id, rating, comment, parseInt(report_status), foto]
     );
 
     return res.status(201).json({
@@ -36,6 +58,7 @@ export const createFeedback = async (req, res) => {
         rating,
         comment,
         report_status,
+        foto,
       },
     });
   } catch (error) {

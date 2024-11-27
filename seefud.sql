@@ -33,7 +33,8 @@ CREATE TABLE `feedback` (
   `vendor_id` int NOT NULL,
   `rating` int NOT NULL,
   `comment` longtext NOT NULL,
-  `report_status` tinyint(1) NOT NULL
+  `report_status` tinyint(1) NOT NULL,
+  `foto` varchar(255)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------

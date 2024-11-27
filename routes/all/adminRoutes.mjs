@@ -48,4 +48,8 @@ router.patch(
   updateVendorRating
 );
 
+// tugas mbak ria
+// update report status
+// exampel 0  > 1
+
 export default router;

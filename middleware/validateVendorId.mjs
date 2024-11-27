@@ -11,10 +11,9 @@ export const validateVendorId = async (req, res, next) => {
   }
 
   try {
-    const [result] = await db.query(
-      "SELECT * FROM users WHERE id = ? AND role = 'vendor'",
-      [vendorId]
-    );
+    const [result] = await db.query("SELECT * FROM vendor WHERE id = ?", [
+      vendorId,
+    ]);
     if (result.length === 0) {
       return res.status(404).json({
         status: "failed",

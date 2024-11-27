@@ -69,7 +69,7 @@ export const getFeedback = async (req, res) => {
         f.report_status AS reportStatus,
         f.vendor_id AS vendorId
       FROM 
-        feedbacks AS f
+        feedback AS f
       JOIN 
         users AS u 
       ON 
@@ -103,10 +103,9 @@ export const deleteVendor = async (req, res) => {
   const { vendorId } = req.params;
 
   try {
-    const [result] = await db.query(
-      "DELETE FROM users WHERE id = ? AND role = 'vendor'",
-      [vendorId]
-    );
+    const [result] = await db.query("DELETE FROM vendor WHERE id = ?", [
+      vendorId,
+    ]);
 
     if (result.affectedRows === 0) {
       return res
@@ -130,7 +129,9 @@ export const deleteVendor = async (req, res) => {
 // Update Vendor Rating
 export const updateVendorRating = async (req, res) => {
   const { vendorId } = req.params;
-  const { rating } = req.body;
+  let { rating } = req.body;
+
+  rating = parseInt(rating); // change a typeof from string to integer
 
   if (typeof rating !== "number" || rating < 0 || rating > 5) {
     return res
@@ -140,7 +141,7 @@ export const updateVendorRating = async (req, res) => {
 
   try {
     const [result] = await db.query(
-      "UPDATE users SET rating = ? WHERE id = ? AND role = 'vendor'",
+      "UPDATE vendor SET rating = ? WHERE id = ?",
       [rating, vendorId]
     );
 
