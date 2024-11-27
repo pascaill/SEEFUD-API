@@ -11,21 +11,16 @@ import { authenticateToken } from "../../middleware/authMiddleware.mjs";
 const router = express.Router();
 
 router.post(
-  "/feedback/:vendorId",
+  "/:id",
   authenticateToken,
   upload.single("foto"), // Middleware untuk upload foto
   createFeedback
 );
 
-router.get("/feedback/:id", authenticateToken, getFeedback);
+router.get("/:id", authenticateToken, getFeedback);
 
-router.patch(
-  "/feedback/:id",
-  authenticateToken,
-  upload.single("foto"),
-  updateFeedback
-);
+router.patch("/:id", authenticateToken, upload.single("foto"), updateFeedback);
 
-router.delete("/feedback/:id", authenticateToken, deleteFeedback);
+router.delete("/:id", authenticateToken, deleteFeedback);
 
 export default router;

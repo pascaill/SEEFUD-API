@@ -10,22 +10,12 @@ import ingredientRoutes from "./all/ingredientsRoutes.mjs";
 
 const router = express.Router();
 
-// router.use({
-//   authRoutes,
-//   vendorRoutes,
-//   productRoutes,
-//   feedbackRoutes,
-//   adminAuthRoutes,
-//   adminRoutes,
-//   ingredientRoutes,
-// });
-
-router.use(authRoutes);
-router.use(vendorRoutes);
-router.use(productRoutes);
-router.use(feedbackRoutes);
-router.use(adminRoutes);
-router.use(adminAuthRoutes);
-router.use(ingredientRoutes);
+router.use("/auth", authRoutes);
+router.use("/vendor", vendorRoutes);
+router.use("/products", productRoutes);
+router.use("/feedback", feedbackRoutes);
+router.use("/admin", adminRoutes);
+router.use("/admin/auth", adminAuthRoutes);
+router.use("/ingredients", ingredientRoutes);
 
 export default router;

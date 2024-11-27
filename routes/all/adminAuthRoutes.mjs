@@ -8,8 +8,8 @@ import {
 const router = express.Router();
 
 // Admin authentication routes
-router.post("/registerAdmin", registerAdmin);
-router.post("/loginAdmin", loginAdmin);
-router.post("/logoutAdmin", logoutAdmin);
+router.post("/register", registerAdmin);
+router.post("/login", loginAdmin);
+router.post("/logout", logoutAdmin);
 
 export default router;

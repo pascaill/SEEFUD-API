@@ -23,6 +23,7 @@ export const validateVendorId = async (req, res, next) => {
     }
     next();
   } catch (error) {
+    console.log(error);
     return res.status(500).json({
       status: "failed",
       message: "An error occurred while validating vendor ID",

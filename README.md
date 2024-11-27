@@ -1,347 +1,531 @@
-# SeeFud Management API Testing Guide
-
-This guide provides instructions on how to use the SeeFud Management API Postman collection to test various API endpoints related to user authentication, profile management, vendor operations, and product management. Follow the steps below to import the collection and execute each endpoint.
+# API Documentation
 
 ## Table of Contents
 
-- [Prerequisites](#prerequisites)
-- [Importing the Postman Collection](#importing-the-postman-collection)
-- [Setting Up Environment Variables](#setting-up-environment-variables)
-- [Endpoint Testing](#endpoint-testing)
-  - [User Authentication](#user-authentication)
-  - [User Profile](#user-profile)
-  - [Vendor Dashboard](#vendor-dashboard)
-  - [Vendor](#vendor)
-  - [Product](#product)
-  - [Feedback](#feedback)
-  - [Ingredients](#ingredients)
+1. [Authentication](#authentication)
+2. [Admin Authentication](#admin-authentication)
+3. [Admin](#admin)
+4. [Vendor](#vendor)
+5. [Products](#products)
+6. [Feedback](#feedback)
+7. [Ingredients](#ingredients)
 
-## Prerequisites
+---
 
-- Install [Postman](https://www.postman.com/downloads/) on your machine.
-- Obtain the `SeeFud Management API` Postman collection in JSON format.
+## Authentication
 
-## Importing the Postman Collection
+### 1. Register User/Vendor
 
-1. Open Postman.
-2. Click on **Import** in the top-left corner.
-3. Select **Upload Files** and choose the `SeeFud Management API` collection JSON file.
-4. Once imported, the collection should appear in your Postman sidebar.
+**Endpoint:** `/auth/register`  
+**Method:** `POST`  
+**Body:**
 
-## Setting Up Environment Variables
+```json
+{
+  "name": "string",
+  "email": "string",
+  "password": "string",
+  "role": "vendor/customer"
+}
+```
 
-This collection uses environment variables to manage dynamic data, such as the base URL and authentication tokens.
+**Response:**
 
-1. Go to **Environments** in Postman and create a new environment (e.g., `SeeFud API Environment`).
-2. Add the following variables:
-   - `baseUrl`: Set this to the base URL of your API (e.g., `https://api.example.com`).
-   - `authToken`: This will be dynamically set after a successful login.
-   - `userId`: This will be dynamically set after login.
-   - `vendorId` and `productId`: These will be set after creating a vendor or product.
-3. Save the environment and select it before running the collection.
+```json
+{
+  "status": "success",
+  "message": "User created",
+  "data": {
+    "user": {
+      "id": 1,
+      "name": "John Doe",
+      "email": "john.doe@example.com",
+      "role": "vendor"
+    },
+    "token": "string"
+  }
+}
+```
 
-## Endpoint Testing
+---
 
-### User Authentication
+### 2. Login User/Vendor
 
-- **Register**: Creates a new user account.
+**Endpoint:** `/auth/login`  
+**Method:** `POST`  
+**Body:**
 
-  - **Method**: `POST`
-  - **URL**: `{{baseUrl}}/register`
-  - **Body**:
-    ```json
+```json
+{
+  "email": "string",
+  "password": "string"
+}
+```
+
+**Response:**
+
+```json
+{
+  "status": "success",
+  "message": "Login successful",
+  "data": {
+    "id": 1,
+    "name": "John Doe",
+    "email": "john.doe@example.com",
+    "role": "vendor",
+    "token": "string"
+  }
+}
+```
+
+---
+
+### 3. Logout User/Vendor
+
+**Endpoint:** `/auth/logout`  
+**Method:** `POST`  
+**Response:**
+
+```json
+{
+  "message": "User logged out successfully"
+}
+```
+
+---
+
+## Admin Authentication
+
+### 1. Register Admin
+
+**Endpoint:** `/admin/auth/register`  
+**Method:** `POST`  
+**Body:**
+
+```json
+{
+  "name": "string",
+  "email": "string",
+  "password": "string"
+}
+```
+
+**Response:**
+
+```json
+{
+  "status": "success",
+  "message": "Admin registered successfully",
+  "data": {
+    "admin": {
+      "id": 1,
+      "name": "Admin User",
+      "email": "admin@example.com"
+    },
+    "token": "string"
+  }
+}
+```
+
+---
+
+### 2. Login Admin
+
+**Endpoint:** `/admin/auth/login`  
+**Method:** `POST`  
+**Body:**
+
+```json
+{
+  "email": "string",
+  "password": "string"
+}
+```
+
+**Response:**
+
+```json
+{
+  "status": "success",
+  "message": "Login successful",
+  "data": {
+    "id": 1,
+    "name": "Admin User",
+    "email": "admin@example.com",
+    "token": "string"
+  }
+}
+```
+
+---
+
+### 3. Logout Admin
+
+**Endpoint:** `/admin/auth/logout`  
+**Method:** `POST`  
+**Response:**
+
+```json
+{
+  "message": "Admin logged out successfully"
+}
+```
+
+---
+
+## Admin
+
+### 1. Get Admin Dashboard Counts
+
+**Endpoint:** `/admin/counts`  
+**Method:** `GET`  
+**Headers:**
+
+```json
+{
+  "Authorization": "Bearer <token>"
+}
+```
+
+**Response:**
+
+```json
+{
+  "status": "success",
+  "message": "Counts retrieved successfully",
+  "data": {
+    "totalUsers": 10,
+    "totalVendors": 5
+  }
+}
+```
+
+---
+
+### 2. Get Vendors
+
+**Endpoint:** `/admin/vendors`  
+**Method:** `GET`  
+**Headers:**
+
+```json
+{
+  "Authorization": "Bearer <token>"
+}
+```
+
+**Response:**
+
+```json
+{
+  "status": "success",
+  "message": "Vendors retrieved successfully",
+  "data": [
     {
-      "name": "testuser",
-      "email": "test@example.com",
-      "password": "password123",
-      "role": "vendor" // admin|vendor|customer
+      "vendorId": 1,
+      "name": "Vendor A",
+      "location": "City A",
+      "rating": 4.5
     }
-    ```
-
-- **Login**: Authenticates an existing user and stores the auth token.
-
-  - **Method**: `POST`
-  - **URL**: `{{baseUrl}}/login`
-  - **Body**:
-    ```json
-    {
-      "email": "test@example.com",
-      "password": "password123"
-    }
-    ```
-  - **Note**: This request stores `authToken` and `userId` for use in other requests.
-
-- **Logout**: Logs out the authenticated user.
-  - **Method**: `POST`
-  - **URL**: `{{baseUrl}}/logout`
-  - **Headers**: `Authorization: Bearer {{authToken}}`
-
-### User Profile
-
-- **Update Profile**: Updates user information.
-
-  - **Method**: `PUT`
-  - **URL**: `{{baseUrl}}/profile`
-  - **Body**:
-    ```json
-    {
-      "name": "updatedName",
-      "email": "updated@example.com"
-    }
-    ```
-
-- **Delete Account**: Deletes the user account.
-  - **Method**: `DELETE`
-  - **URL**: `{{baseUrl}}/profile`
-  - **Body**:
-    ```json
-    {
-      "email": "test@example.com"
-    }
-    ```
-
-### Vendor Dashboard
-
-- **Access Dashboard**: Retrieves vendor dashboard data.
-  - **Method**: `GET`
-  - **URL**: `{{baseUrl}}/vendor/dashboard`
-  - **Headers**: `Authorization: Bearer {{authToken}}`
-
-### Vendor
-
-- **Create Vendor**: Registers a new vendor.
-
-  - **Method**: `POST`
-  - **URL**: `{{baseUrl}}/vendor`
-  - **Body**:
-    ```json
-    {
-      "user_id": {{userId}},
-      "store_name": "Store Example",
-      "description": "A sample description",
-      "location": "Sample Location"
-    }
-    ```
-  - **Note**: Stores `vendorId` for future requests.
-
-- **Get All Vendor**: Retrieves vendor collections.
-
-  - **Method**: `GET`
-  - **URL**: `{{baseUrl}}/vendor`
-
-- **Get Vendor by ID**: Retrieves vendor details.
-
-  - **Method**: `GET`
-  - **URL**: `{{baseUrl}}/vendor/{{vendorId}}`
-
-- **Update Vendor**: Updates vendor information.
-
-  - **Method**: `PUT`
-  - **URL**: `{{baseUrl}}/vendor/{{vendorId}}`
-  - **Body**:
-    ```json
-    {
-      "store_name": "Updated Store Name",
-      "description": "Updated description"
-    }
-    ```
-
-- **Delete Vendor**: Deletes the vendor.
-  - **Method**: `DELETE`
-  - **URL**: `{{baseUrl}}/vendor/{{vendorId}}`
-
-### Product
-
-- **Create Product**: Adds a new product under a vendor.
-
-  - **Method**: `POST`
-  - **URL**: `{{baseUrl}}/product`
-  - **Body**:
-
-    // Required Format
-
-    ```json
-    {
-      "vendor_id": {{vendorId}},
-      "name": "Product Example",
-      "description": "Product description",
-      "price": 100.50,
-      "qr_code": "SampleQRCodeData",
-    }
-    ```
-
-    // optional format (with a image uploaded)
-
-    ```json
-    {
-     "vendor_id": {{vendorId}},
-     "name": "Product Example With Image",
-     "description": "Product description",
-     "price": 100.50,
-     "qr_code": "SampleQRCodeData",
-     "image" : "<File> with a required type is image/"
-    }
-    ```
-
-  - **Note**: Stores `productId` for future requests.
-
-- **Create Product with Ingredients**
-
-  **Endpoint**
-  `POST /productsWithIngredient`
-
-  **Deskripsi**
-  Endpoint ini digunakan untuk membuat produk baru sekaligus menghubungkan produk tersebut dengan bahan-bahan (`ingredients`). Data produk akan disimpan di tabel `product`, dan hubungan antara produk dan bahan akan disimpan di tabel pivot `ingredients_product`.
-
-  **Headers**
-  **Authorization**: Bearer `<JWT_TOKEN>`  
-  Diperlukan untuk autentikasi dan menentukan `vendor_id` dari token JWT.
-
-  **Request Parameters**
-  Tidak ada parameter di URL.
-
-  **Request Body**
-  Request body dikirim dalam format `multipart/form-data` untuk memungkinkan pengunggahan file gambar. Berikut adalah daftar parameter yang harus dikirim:
-
-  | Parameter     | Tipe          | Wajib | Deskripsi                                                                     |
-  | ------------- | ------------- | ----- | ----------------------------------------------------------------------------- |
-  | `name`        | String        | Yes   | Nama produk.                                                                  |
-  | `description` | String        | Yes   | Deskripsi produk.                                                             |
-  | `price`       | Number        | Yes   | Harga produk.                                                                 |
-  | `qr_code`     | String        | Yes   | QR code untuk produk.                                                         |
-  | `image`       | File (image)  | No    | Gambar produk (opsional). Disimpan di folder `public/assets/products`.        |
-  | `ingredients` | Array of JSON | No    | Daftar bahan yang digunakan. Setiap elemen harus berupa JSON dengan struktur: |
-  |               |               |       | - `ingredient_id`: ID bahan dari tabel `ingredients`.                         |
-  |               |               |       | - `qty`: Jumlah bahan yang digunakan.                                         |
-
-  #### **Contoh Struktur JSON untuk Ingredients**
-
-  ```json
-  [
-    { "ingredient_id": 1, "qty": 2 },
-    { "ingredient_id": 3, "qty": 5 }
   ]
-  ```
+}
+```
 
-- **Get All Product**: Retrieves product collections.
+---
 
-  - **Method**: `GET`
-  - **URL**: `{{baseUrl}}/product`
+### 3. Delete Vendor
 
-- **Get Product**: Retrieves product details.
+**Endpoint:** `/admin/vendors/:vendorId`  
+**Method:** `DELETE`  
+**Headers:**
 
-  - **Method**: `GET`
-  - **URL**: `{{baseUrl}}/product/{{productId}}`
+```json
+{
+  "Authorization": "Bearer <token>"
+}
+```
 
-- **Update Product**: Updates product details.
+**Response:**
 
-  - **Method**: `PUT`
-  - **URL**: `{{baseUrl}}/product/{{productId}}`
-  - **Body**:
-    ```json
+```json
+{
+  "status": "success",
+  "message": "Vendor deleted successfully"
+}
+```
+
+---
+
+### 4. Update Vendor Rating
+
+**Endpoint:** `/admin/vendors/:vendorId/rating`  
+**Method:** `PATCH`  
+**Headers:**
+
+```json
+{
+  "Authorization": "Bearer <token>"
+}
+```
+
+**Body:**
+
+```json
+{
+  "rating": 4.5
+}
+```
+
+**Response:**
+
+```json
+{
+  "status": "success",
+  "message": "Vendor rating updated successfully"
+}
+```
+
+---
+
+## Vendor
+
+### 1. Get All Vendors
+
+**Endpoint:** `/vendor`  
+**Method:** `GET`  
+**Response:**
+
+```json
+{
+  "status": "success",
+  "message": "Vendor collection retrieved successfully",
+  "data": [
     {
-      "name": "Updated Product Name",
-      "description": "Updated product description",
-      "price": 200.75,
-      "qr_code": "UpdatedQRCodeData"
+      "id": 1,
+      "store_name": "Vendor 1",
+      "description": "Vendor description",
+      "location": "Location 1"
     }
-    ```
+  ]
+}
+```
 
-- **Delete Product**: Deletes the product.
+---
 
-  - **Method**: `DELETE`
-  - **URL**: `{{baseUrl}}/product/{{productId}}`
+### 2. Create Vendor
 
-  ### Feedback
+**Endpoint:** `/vendor`  
+**Method:** `POST`  
+**Headers:**
 
-- **Create Feedback**: Adds a new Feedback .
+```json
+{
+  "Authorization": "Bearer <token>"
+}
+```
 
-  - **Method**: `POST`
-  - **URL**: `{{baseUrl}}/feedback`
-  - **Body**:
+**Body:**
 
-    ```json
+```json
+{
+  "store_name": "string",
+  "description": "string",
+  "location": "string"
+}
+```
+
+**Response:**
+
+```json
+{
+  "status": "success",
+  "message": "Vendor created successfully",
+  "data": {
+    "id": 1,
+    "store_name": "Vendor 1",
+    "description": "Vendor description",
+    "location": "Location 1"
+  }
+}
+```
+
+---
+
+## Products
+
+### 1. Get All Products for Vendor
+
+**Endpoint:** `/products/:vendorId`  
+**Method:** `GET`  
+**Response:**
+
+```json
+{
+  "status": "success",
+  "message": "Product collection retrieved successfully",
+  "data": [
     {
-      "user_id": {{userId}},
-      "vendor_id": {{vendorId}},
-      "rating": "5", // 1 - 5
-      "comment": "Comment Feedback",
-      "report_status": 0, // boolean 0|1
-
+      "id": 1,
+      "name": "Product 1",
+      "description": "Product description",
+      "price": 100
     }
-    ```
+  ]
+}
+```
 
-  - **Note**: Stores `feedbackId` for future requests.
+---
 
-- **Get Feedback**: Retrieves product details.
+### 2. Create Product
 
-  - **Method**: `GET`
-  - **URL**: `{{baseUrl}}/feedback/{{feedbackId}}`
+**Endpoint:** `/products`  
+**Method:** `POST`  
+**Headers:**
 
-- **Update Feedback**: Updates feedback details.
+```json
+{
+  "Authorization": "Bearer <token>"
+}
+```
 
-  - **Method**: `PUT`
-  - **URL**: `{{baseUrl}}/feedback/{{feedbackId}}`
-  - **Body**:
+**Body:**
 
-    ```json
+```json
+{
+  "name": "string",
+  "description": "string",
+  "price": 100,
+  "qr_code": "string"
+}
+```
+
+**Response:**
+
+```json
+{
+  "status": "success",
+  "message": "Product created successfully",
+  "data": {
+    "id": 1,
+    "name": "Product 1",
+    "description": "Product description",
+    "price": 100,
+    "qr_code": "string"
+  }
+}
+```
+
+---
+
+## Feedback
+
+### 1. Create Feedback
+
+**Endpoint:** `/feedback/:id`  
+**Method:** `POST`  
+**Headers:**
+
+```json
+{
+  "Authorization": "Bearer <token>"
+}
+```
+
+**Body:**
+
+```json
+{
+  "rating": 5,
+  "comment": "string",
+  "report_status": 0
+}
+```
+
+**Response:**
+
+```json
+{
+  "status": "success",
+  "message": "Feedback created successfully",
+  "data": {
+    "id": 1,
+    "vendor_id": 1,
+    "rating": 5,
+    "comment": "Great service",
+    "report_status": 0
+  }
+}
+```
+
+---
+
+## Ingredients
+
+### 1. Get All Ingredients
+
+**Endpoint:** `/ingredients`  
+**Method:** `GET`  
+**Headers:**
+
+```json
+{
+  "Authorization": "Bearer <token>"
+}
+```
+
+**Response:**
+
+```json
+{
+  "status": "success",
+  "message": "Ingredients retrieved successfully",
+  "data": [
     {
-      "user_id": {{userId}},
-      "vendor_id": {{vendorId}},
-      "rating": "5", // 1 - 5
-      "comment": "Comment Feedback",
-      "report_status": 0, // boolean 0|1
-
+      "id": 1,
+      "name": "Ingredient A",
+      "description": "Description A",
+      "qty": 10,
+      "unit": "kg"
     }
-    ```
+  ]
+}
+```
 
-- **Delete Feedback**: Deletes the feedback.
-  - **Method**: `DELETE`
-  - **URL**: `{{baseUrl}}/feedback/{{feedbackId}}`
+### 2. Create Ingredient
 
-### Ingredients
+**Endpoint:** `/ingredients`  
+**Method:** `POST`  
+**Headers:**
 
-- **Create Ingredient**: Adds a new ingredient.
+```json
+{
+  "Authorization": "Bearer <token>"
+}
+```
 
-  **Endpoint**
-  `POST /ingredient`
+**Body:**
 
-  **Request Body**
-  Request body dikirim dalam format `multipart/form-data` untuk memungkinkan pengunggahan file gambar. Berikut adalah daftar parameter yang harus dikirim:
+```json
+{
+  "name": "string",
+  "description": "string",
+  "qty": 10,
+  "unit": "kg"
+}
+```
 
-  | Parameter     | Tipe         | Wajib | Deskripsi                                                                     |
-  | ------------- | ------------ | ----- | ----------------------------------------------------------------------------- |
-  | `name`        | String       | Yes   | Nama Ingredient.                                                              |
-  | `description` | String       | Yes   | Deskripsi ingredient.                                                         |
-  | `qty`         | Number       | Yes   | Kuantitas ingredient.                                                         |
-  | `Unit`        | String       | Yes   | Unit ingredient (gr, kg, dll).                                                |
-  | `image`       | File (image) | No    | Gambar ingredient (opsional). Disimpan di folder `public/assets/ingredients`. |
+**Response:**
 
-- **Get All Ingredient**: Retrieves ingredient collections.
-
-  - **Method**: `GET`
-  - **URL**: `{{baseUrl}}/ingredient`
-
-- **Get Ingredient**: Retrieves ingredient details.
-
-  - **Method**: `GET`
-  - **URL**: `{{baseUrl}}/ingredient/{{ingredientId}}`
-
-- **Update Ingredient**: Updates ingredient details.
-
-  - **Method**: `PUT`
-  - **URL**: `{{baseUrl}}/ingredient/{{ingredientId}}`
-  - **Body**:
-    ```json
-    {
-      "name": "Updated Ingredient Name",
-      "description": "Updated ingredient description",
-      "qty": number,
-      "unit": "satuan"
-    }
-    ```
-
-- **Delete Ingredient**: Deletes the ingredient.
-
-  - **Method**: `DELETE`
-  - **URL**: `{{baseUrl}}/ingredient/{{ingredientId}}`
+```json
+{
+  "status": "success",
+  "message": "Ingredient created successfully",
+  "data": {
+    "id": 1,
+    "name": "Ingredient A",
+    "description": "Description A",
+    "qty": 10,
+    "unit": "kg"
+  }
+}
+```
