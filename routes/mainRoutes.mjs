@@ -10,6 +10,10 @@ import ingredientRoutes from "./all/ingredientsRoutes.mjs";
 
 const router = express.Router();
 
+router.get("/", (req, res) => {
+  res.json({ message: "success" });
+});
+
 router.use("/auth", authRoutes);
 router.use("/vendor", vendorRoutes);
 router.use("/products", productRoutes);
