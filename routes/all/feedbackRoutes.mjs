@@ -2,6 +2,7 @@ import express from "express";
 import {
   createFeedback,
   getFeedback,
+  getAllFeedback,
   updateFeedback,
   deleteFeedback,
   upload,
@@ -17,6 +18,7 @@ router.post(
   createFeedback
 );
 
+router.get("/", authenticateToken, getAllFeedback);
 router.get("/:id", authenticateToken, getFeedback);
 
 router.patch("/:id", authenticateToken, upload.single("foto"), updateFeedback);

@@ -344,7 +344,9 @@
     "id": 1,
     "store_name": "Vendor 1",
     "description": "Vendor description",
-    "location": "Location 1"
+    "location": "Location 1",
+    "rating": 0, // default value
+    "is_verified": false // default value
   }
 }
 ```

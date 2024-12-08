@@ -3,10 +3,12 @@ import path from "path";
 import fs from "fs/promises";
 import db from "../connection/connection.mjs";
 
+const destinationUpload = "public/images/ingredients";
+
 // Konfigurasi multer untuk upload gambar
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    const uploadPath = path.join(process.cwd(), "public/images/ingredients");
+    const uploadPath = path.join(process.cwd(), destinationUpload);
     cb(null, uploadPath); // Direktori penyimpanan
   },
   filename: (req, file, cb) => {
@@ -142,7 +144,7 @@ export const updateIngredient = [
         if (rows.length > 0 && rows[0].image) {
           const oldImagePath = path.join(
             process.cwd(),
-            "public",
+            destinationUpload,
             rows[0].image
           );
           await fs
@@ -189,6 +191,21 @@ export const deleteIngredient = async (req, res) => {
   const { id } = req.params;
 
   try {
+    const [rows] = await db.query(
+      "SELECT image FROM ingredients WHERE id = ?",
+      [id]
+    );
+    if (rows.length > 0 && rows[0].image) {
+      const oldImagePath = path.join(
+        process.cwd(),
+        destinationUpload,
+        rows[0].image
+      );
+      await fs
+        .unlink(oldImagePath)
+        .catch((err) => console.error("Failed to delete old image:", err));
+    }
+
     const [result] = await db.query("DELETE FROM ingredients WHERE id = ?", [
       id,
     ]);

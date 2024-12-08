@@ -1,9 +1,41 @@
 import db from "../connection/connection.mjs";
+import multer from "multer";
+import path from "path";
+import fs from "fs/promises";
 
+const destinationUpload = "public/images/vendor";
+// Konfigurasi Multer untuk menyimpan file di memori
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const uploadPath = path.join(process.cwd(), destinationUpload);
+    cb(null, uploadPath); // Direktori penyimpanan
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    cb(null, uniqueSuffix + path.extname(file.originalname)); // Nama file unik
+  },
+});
+
+export const upload = multer({ storage });
 // Mendapatkan semua vendor
 export const getAllVendor = async (req, res) => {
   try {
-    const [result] = await db.query("SELECT * FROM vendor");
+    const [result] = await db.query(`SELECT 
+    vendor.*, 
+    users.name AS user_name,
+    COUNT(feedback.id) AS total_feedback
+FROM 
+    vendor
+LEFT JOIN 
+    feedback
+ON 
+    vendor.id = feedback.vendor_id
+LEFT JOIN 
+    users
+ON 
+    vendor.user_id = users.id
+GROUP BY 
+    vendor.id`);
     return res.status(200).json({
       status: "success",
       message: "Vendor collection retrieved successfully",
@@ -23,6 +55,7 @@ export const getAllVendor = async (req, res) => {
 export const createVendor = async (req, res) => {
   const { id: user_id } = req.user; // ID vendor dari token JWT
   const { store_name, description, location } = req.body;
+  const image = req.file ? req.file.filename : null; // Path gambar
 
   if (!store_name || !description || !location) {
     return res.status(400).json({
@@ -31,12 +64,13 @@ export const createVendor = async (req, res) => {
     });
   }
 
-  const rating = 1; // default value
+  const rating = 0; // default value
+  const isVerified = false;
 
   try {
     const [result] = await db.query(
-      "INSERT INTO vendor (user_id, store_name, description, location, rating) VALUES (?, ?, ?, ?)",
-      [user_id, store_name, description, location, rating]
+      "INSERT INTO vendor (user_id, store_name, description, location, rating,is_verified,image) VALUES (?, ?, ?, ?, ?, ?, ?)",
+      [user_id, store_name, description, location, rating, isVerified, image]
     );
 
     return res.status(201).json({
@@ -49,6 +83,8 @@ export const createVendor = async (req, res) => {
         description,
         location,
         rating,
+        isVerified,
+        image,
       },
     });
   } catch (error) {
@@ -92,7 +128,7 @@ export const getVendor = async (req, res) => {
 export const updateVendor = async (req, res) => {
   const { id } = req.params;
   const { store_name, description, location } = req.body;
-
+  const image = req.file ? `/images/vendor/${req.file.filename}` : null; // Path gambar
   if (!store_name && !description && !location) {
     return res.status(400).json({
       status: "failed",
@@ -105,9 +141,10 @@ export const updateVendor = async (req, res) => {
       `UPDATE vendor SET 
         store_name = COALESCE(?, store_name), 
         description = COALESCE(?, description), 
-        location = COALESCE(?, location) 
+        location = COALESCE(?, location) ,
+         image = COALESCE(?, image), 
       WHERE id = ?`,
-      [store_name, description, location, id]
+      [store_name, description, location, image, id]
     );
 
     if (result.affectedRows === 0) {
@@ -136,6 +173,20 @@ export const deleteVendor = async (req, res) => {
   const { id } = req.params;
 
   try {
+    const [rows] = await db.query("SELECT image FROM vendor WHERE id = ?", [
+      id,
+    ]);
+    if (rows.length > 0 && rows[0].image) {
+      const oldImagePath = path.join(
+        process.cwd(),
+        destinationUpload,
+        rows[0].image
+      );
+      await fs
+        .unlink(oldImagePath)
+        .catch((err) => console.error("Failed to delete old image:", err));
+    }
+
     const [result] = await db.query("DELETE FROM vendor WHERE id = ?", [id]);
 
     if (result.affectedRows === 0) {

@@ -7,6 +7,7 @@ import feedbackRoutes from "./all/feedbackRoutes.mjs";
 import adminAuthRoutes from "./all/adminAuthRoutes.mjs";
 import adminRoutes from "./all/adminRoutes.mjs";
 import ingredientRoutes from "./all/ingredientsRoutes.mjs";
+import usersRoutes from "./all/usersRoutes.mjs";
 
 const router = express.Router();
 
@@ -21,5 +22,6 @@ router.use("/feedback", feedbackRoutes);
 router.use("/admin", adminRoutes);
 router.use("/admin/auth", adminAuthRoutes);
 router.use("/ingredients", ingredientRoutes);
+router.use("/users", usersRoutes);
 
 export default router;

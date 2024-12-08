@@ -11,10 +11,16 @@ const standardResponse = (status, message, data = null) => ({
 export const getCounts = async (req, res) => {
   try {
     const [[userCount]] = await db.query(
-      "SELECT COUNT(*) AS totalUsers FROM users WHERE role = 'customer'"
+      "SELECT COUNT(*) AS totalUsers FROM users WHERE role != 'admin'"
     );
     const [[vendorCount]] = await db.query(
-      "SELECT COUNT(*) AS totalVendors FROM users WHERE role = 'vendor'"
+      "SELECT COUNT(*) AS totalVendors FROM vendor"
+    );
+    const [[customerCount]] = await db.query(
+      "SELECT COUNT(*) AS totalCustomers FROM users WHERE role = 'customer'"
+    );
+    const [[reportsCounts]] = await db.query(
+      "SELECT COUNT(*) AS totalReports FROM feedback"
     );
 
     return res.status(200).json({
@@ -23,6 +29,8 @@ export const getCounts = async (req, res) => {
       data: {
         totalUsers: userCount.totalUsers,
         totalVendors: vendorCount.totalVendors,
+        totalCustomers: customerCount.totalCustomers,
+        totalReports: reportsCounts.totalReports,
       },
     });
   } catch (error) {
@@ -62,18 +70,19 @@ export const getFeedback = async (req, res) => {
   try {
     const [feedbacks] = await db.query(
       `SELECT 
-        f.id AS feedbackId,
-        u.name AS userName,
-        f.rating,
-        f.comment,
-        f.report_status AS reportStatus,
-        f.vendor_id AS vendorId
+        f.*,
+        u.name AS user_name,
+        v.store_name AS vendor_name
       FROM 
         feedback AS f
       JOIN 
         users AS u 
       ON 
         f.user_id = u.id
+      JOIN 
+        vendor AS v
+      ON 
+        f.vendor_id = v.id
       WHERE 
         f.vendor_id = ?`,
       [vendorId]
@@ -158,6 +167,70 @@ export const updateVendorRating = async (req, res) => {
     console.error("Update vendor rating error:", error);
     return res.status(500).json(
       standardResponse("failed", "Could not update vendor rating", {
+        error: error.message,
+      })
+    );
+  }
+};
+export const getAllUsers = async (req, res) => {
+  try {
+    const [users] = await db.query("SELECT * FROM users WHERE role != 'admin'");
+
+    return res.status(200).json({
+      status: "success",
+      message: "Users retrieved successfully",
+      data: users,
+    });
+  } catch (error) {
+    console.error("Get users error:", error.message);
+    return res.status(500).json({
+      status: "failed",
+      message: "Could not retrieve users",
+    });
+  }
+};
+
+// Delete Vendor
+export const deleteUser = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const [result] = await db.query("DELETE FROM users WHERE id = ?", [id]);
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json(standardResponse("failed", "User not found"));
+    }
+
+    return res
+      .status(200)
+      .json(standardResponse("success", "User deleted successfully"));
+  } catch (error) {
+    console.error("Delete user error:", error);
+    return res.status(500).json(
+      standardResponse("failed", "Could not delete user", {
+        error: error.message,
+      })
+    );
+  }
+};
+
+export const editUser = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const [result] = await db.query("DELETE FROM users WHERE id = ?", [id]);
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json(standardResponse("failed", "User not found"));
+    }
+
+    return res
+      .status(200)
+      .json(standardResponse("success", "User deleted successfully"));
+  } catch (error) {
+    console.error("Delete user error:", error);
+    return res.status(500).json(
+      standardResponse("failed", "Could not delete user", {
         error: error.message,
       })
     );

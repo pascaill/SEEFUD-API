@@ -1,5 +1,22 @@
 import db from "../connection/connection.mjs";
+import multer from "multer";
+import path from "path";
+import fs from "fs/promises";
 
+const destinationUpload = "public/images/products";
+// Konfigurasi Multer untuk menyimpan file di memori
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const uploadPath = path.join(process.cwd(), destinationUpload);
+    cb(null, uploadPath); // Direktori penyimpanan
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    cb(null, uniqueSuffix + path.extname(file.originalname)); // Nama file unik
+  },
+});
+
+export const upload = multer({ storage });
 // Fungsi untuk mendapatkan semua produk milik vendor tertentu (dapat diakses oleh semua user)
 export const getAllProducts = async (req, res) => {
   const { vendorId } = req.params; // ID vendor dari parameter URL
@@ -29,7 +46,7 @@ export const getAllProducts = async (req, res) => {
 export const createProduct = async (req, res) => {
   const vendor_id = req.user.id; // Ambil ID vendor dari token JWT
   const { name, description, price, qr_code } = req.body;
-
+  const image = req.file ? req.file.filename : null; //
   if (!name || !description || typeof price !== "number" || !qr_code) {
     return res.status(400).json({
       status: "failed",
@@ -39,8 +56,8 @@ export const createProduct = async (req, res) => {
 
   try {
     const [result] = await db.query(
-      "INSERT INTO product (vendor_id, name, description, price, qr_code) VALUES (?, ?, ?, ?, ?)",
-      [vendor_id, name, description, price, qr_code]
+      "INSERT INTO product (vendor_id, name, description, price, image, qr_code) VALUES (?, ?, ?, ?, ?, ?)",
+      [vendor_id, name, description, price, image, qr_code]
     );
 
     return res.status(201).json({
@@ -52,6 +69,7 @@ export const createProduct = async (req, res) => {
         name,
         description,
         price,
+        image,
         qr_code,
       },
     });
@@ -70,7 +88,7 @@ export const updateProduct = async (req, res) => {
   const vendor_id = req.user.id; // Ambil ID vendor dari token JWT
   const { id } = req.params;
   const { name, description, price, qr_code } = req.body;
-
+  const image = req.file ? `/images/products/${req.file.filename}` : null; // Path gambar
   if (!name && !description && typeof price === "undefined" && !qr_code) {
     return res.status(400).json({
       status: "failed",
@@ -84,9 +102,10 @@ export const updateProduct = async (req, res) => {
         name = COALESCE(?, name), 
         description = COALESCE(?, description), 
         price = COALESCE(?, price), 
+         image = COALESCE(?, image), 
         qr_code = COALESCE(?, qr_code)
       WHERE id = ? AND vendor_id = ?`,
-      [name, description, price, qr_code, id, vendor_id]
+      [name, description, price, image, qr_code, id, vendor_id]
     );
 
     if (result.affectedRows === 0) {
@@ -116,6 +135,20 @@ export const deleteProduct = async (req, res) => {
   const { id } = req.params;
 
   try {
+    const [rows] = await db.query("SELECT image FROM products WHERE id = ?", [
+      id,
+    ]);
+    if (rows.length > 0 && rows[0].image) {
+      const oldImagePath = path.join(
+        process.cwd(),
+        destinationUpload,
+        rows[0].image
+      );
+      await fs
+        .unlink(oldImagePath)
+        .catch((err) => console.error("Failed to delete old image:", err));
+    }
+
     const [result] = await db.query(
       "DELETE FROM product WHERE id = ? AND vendor_id = ?",
       [id, vendor_id]
