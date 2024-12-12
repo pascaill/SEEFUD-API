@@ -5,6 +5,9 @@ import {
   getFeedback,
   deleteVendor,
   updateVendorRating,
+  insertDummy,
+  updateStatuFeedback,
+  deleteUserVendorOrCustomer,
 } from "../../controllers/adminController.mjs";
 
 import {
@@ -51,6 +54,19 @@ router.patch(
 // tugas mbak ria
 // update report status
 // exampel 0  > 1
-// ini udah di cover sama routes feedback
+router.patch(
+  "/feedback/:id",
+  authenticateToken,
+  authorizeAdmin,
+  updateStatuFeedback
+);
 
+router.get("/insert-dummy", insertDummy);
+
+router.delete(
+  "/users/:id",
+  authenticateToken,
+  authorizeAdmin,
+  deleteUserVendorOrCustomer
+);
 export default router;

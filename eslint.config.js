@@ -9,8 +9,17 @@ export default [
         ...globals.browser,
         process: "readonly",
       },
+      parserOptions: {
+        // Pindahkan parserOptions di sini
+        ecmaVersion: "latest", // atau 2022, 2021, dll. sesuai kebutuhan
+        sourceType: "module",
+      },
     },
     files: ["**/*.mjs"],
   },
-  pluginJs.configs.recommended,
+  {
+    ...pluginJs.configs.recommended,
+
+    // Hapus parserOptions di sini
+  },
 ];

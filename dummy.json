@@ -1,0 +1,187 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "name": "Admin User",
+      "password": "admin123",
+      "role": "admin",
+      "email": "admin@example.com"
+    },
+    {
+      "id": 2,
+      "name": "Vendor User",
+      "password": "vendor123",
+      "role": "vendor",
+      "email": "vendor@example.com"
+    },
+    {
+      "id": 3,
+      "name": "Customer User 1",
+      "password": "customer123",
+      "role": "customer",
+      "email": "customer1@example.com"
+    },
+    {
+      "id": 4,
+      "name": "Customer User 2",
+      "password": "customer456",
+      "role": "customer",
+      "email": "customer2@example.com"
+    }
+  ],
+  "vendors": [
+    {
+      "id": 1,
+      "user_id": 2,
+      "store_name": "Delicious Delights",
+      "description": "We serve the best desserts in town!",
+      "location": "Jl. Makanan Enak No. 1",
+      "rating": 4,
+      "is_verified": 1,
+      "image": "delicious_delights.jpg"
+    },
+    {
+      "id": 2,
+      "user_id": 4,
+      "store_name": "Spicy Sensations",
+      "description": "Authentic Indonesian spicy dishes.",
+      "location": "Jl. Pedas No. 2",
+      "rating": 5,
+      "is_verified": 0,
+      "image": "spicy_sensations.jpg"
+    }
+  ],
+  "products": [
+    {
+      "id": 1,
+      "vendor_id": 1,
+      "name": "Chocolate Cake",
+      "description": "Rich and decadent chocolate cake.",
+      "price": 25000,
+      "image": "chocolate_cake.jpg",
+      "qr_code": "qr_code_1.png"
+    },
+    {
+      "id": 2,
+      "vendor_id": 1,
+      "name": "Strawberry Cheesecake",
+      "description": "Creamy cheesecake with fresh strawberries.",
+      "price": 30000,
+      "image": "strawberry_cheesecake.jpg",
+      "qr_code": "qr_code_2.png"
+    },
+    {
+      "id": 3,
+      "vendor_id": 2,
+      "name": "Rendang Padang",
+      "description": "Spicy beef rendang cooked to perfection.",
+      "price": 50000,
+      "image": "rendang_padang.jpg",
+      "qr_code": "qr_code_3.png"
+    }
+  ],
+  "ingredients": [
+    {
+      "id": 1,
+      "name": "Flour",
+      "description": "All-purpose flour",
+      "qty": 1000,
+      "unit": "gram",
+      "image": "flour.jpg"
+    },
+    {
+      "id": 2,
+      "name": "Sugar",
+      "description": "Granulated sugar",
+      "qty": 500,
+      "unit": "gram",
+      "image": "sugar.jpg"
+    },
+    {
+      "id": 3,
+      "name": "Eggs",
+      "description": "Fresh chicken eggs",
+      "qty": 10,
+      "unit": "pcs",
+      "image": "eggs.jpg"
+    },
+    {
+      "id": 4,
+      "name": "Beef",
+      "description": "Premium quality beef",
+      "qty": 500,
+      "unit": "gram",
+      "image": "beef.jpg"
+    },
+    {
+      "id": 5,
+      "name": "Coconut Milk",
+      "description": "Canned coconut milk",
+      "qty": 400,
+      "unit": "ml",
+      "image": "coconut_milk.jpg"
+    }
+  ],
+  "ingredientsProducts": [
+    {
+      "id": 1,
+      "product_id": 1,
+      "ingredient_id": 1
+    },
+    {
+      "id": 2,
+      "product_id": 1,
+      "ingredient_id": 2
+    },
+    {
+      "id": 3,
+      "product_id": 1,
+      "ingredient_id": 3
+    },
+    {
+      "id": 4,
+      "product_id": 2,
+      "ingredient_id": 1
+    },
+    {
+      "id": 5,
+      "product_id": 2,
+      "ingredient_id": 2
+    },
+    {
+      "id": 6,
+      "product_id": 2,
+      "ingredient_id": 3
+    },
+    {
+      "id": 7,
+      "product_id": 3,
+      "ingredient_id": 4
+    },
+    {
+      "id": 8,
+      "product_id": 3,
+      "ingredient_id": 5
+    }
+  ],
+  "feedbacks": [
+    {
+      "id": 1,
+      "user_id": 3,
+      "vendor_id": 1,
+      "rating": 5,
+      "comment": "The chocolate cake was amazing!",
+      "report_status": null,
+      "foto": "feedback_1.jpg"
+    },
+    {
+      "id": 2,
+      "user_id": 4,
+      "vendor_id": 2,
+      "rating": 4,
+      "comment": "The rendang was delicious, but a bit too spicy for me.",
+      "report_status": null,
+      "foto": null
+    }
+  ]
+}

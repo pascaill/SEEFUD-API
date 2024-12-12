@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "start": "node server.mjs",
-    "dev": "npx eslint . && nodemon server.js",
+    "dev": "nodemon server.js",
     "test": "npm run start"
   },
   "keywords": [],

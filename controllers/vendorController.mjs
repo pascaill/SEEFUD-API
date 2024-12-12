@@ -102,7 +102,7 @@ export const getVendor = async (req, res) => {
   const { id } = req.params;
 
   try {
-    const [rows] = await db.query("SELECT * FROM vendor WHERE id = ?", [id]);
+    const [[rows]] = await db.query("SELECT * FROM vendor WHERE id = ?", [id]);
 
     if (rows.length === 0) {
       return res
@@ -112,7 +112,7 @@ export const getVendor = async (req, res) => {
 
     return res.status(200).json({
       status: "success",
-      data: rows[0],
+      data: rows,
     });
   } catch (error) {
     // console.error("Get vendor error:", error);
