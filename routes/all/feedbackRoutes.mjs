@@ -18,8 +18,8 @@ router.post(
   createFeedback
 );
 
-router.get("/", authenticateToken, getAllFeedback);
-router.get("/:id", authenticateToken, getFeedback);
+router.get("/", getAllFeedback);
+router.get("/:id", getFeedback);
 
 router.patch("/:id", authenticateToken, upload.single("foto"), updateFeedback);
 

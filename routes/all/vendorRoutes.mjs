@@ -13,7 +13,8 @@ import { isVendor, isVendorOrAdmin } from "../../middleware/roleMiddleware.mjs";
 const router = express.Router();
 
 // Routes
-router.get("/", authenticateToken, getAllVendor); // Admin/Vendor
+router.get("/", getAllVendor); // Admin/Vendor
+router.get("/:id", getVendor); // Admin/Vendor
 router.post(
   "/",
   authenticateToken,
@@ -21,7 +22,6 @@ router.post(
   upload.single("image"),
   createVendor
 ); // Vendor only
-router.get("/:id", authenticateToken, isVendorOrAdmin, getVendor); // Admin/Vendor
 router.patch(
   "/:id",
   authenticateToken,

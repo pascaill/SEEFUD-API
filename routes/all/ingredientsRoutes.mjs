@@ -11,9 +11,9 @@ import { authenticateToken } from "../../middleware/authMiddleware.mjs";
 
 const router = express.Router();
 
-router.get("/", authenticateToken, getAllIngredients);
+router.get("/", getAllIngredients);
 router.post("/", authenticateToken, createIngredient);
-router.get("/:id", authenticateToken, getIngredient);
+router.get("/:id", getIngredient);
 router.put("/:id", authenticateToken, updateIngredient);
 router.delete("/:id", authenticateToken, deleteIngredient);
 

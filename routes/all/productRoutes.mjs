@@ -12,7 +12,7 @@ import { isVendor } from "../../middleware/roleMiddleware.mjs";
 const router = express.Router();
 
 // Routes
-router.get("/:vendorId", getAllProducts); // Public access for users
+router.get("/:vendorId"); // Public access for users
 router.post(
   "/",
   authenticateToken,
